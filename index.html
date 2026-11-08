@@ -1,0 +1,1759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#E9EAE7">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>3D Prints</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400..800&family=Doto:wght@900&display=swap" rel="stylesheet">
+<script src="config.js"></script>
+<style>
+:root{--danger:var(--accent-text);--sub:var(--muted);--soft:var(--surface);--soft2:var(--thumb);--sheet:var(--bg);--line:var(--divider);--prog:var(--ink);--muted2:var(--outline)}
+:root{
+  --bg:#E9EAE7; --surface:#FAFAF8; --thumb:#EEEFEC; --dim:#F2F3F0;
+  --ink:#111111; --on-ink:#FFFFFF; --title2:#747674; --muted:#5E605E; --muted-dark:#B9BBB7;
+  --outline:#9C9E9A; --divider:#B9BBB7; --disabled:#A9ABA7; --on-disabled:#F0F1EE;
+  --accent:#E0331B; --accent-text:#B3240F;
+  --hatch-base:#CACCC8; --hatch-line:#A9ABA7; --wait:#F7F7F5; --wait-line:#C0C2BE;
+  --tick:#5A5C5A; --tick-lab:#8C8E8A; --dots:#B3B5B1; --dots-on:#111111; --digit2:#A6A8A4;
+  --ph:#9C9E9A; --veil:rgba(17,17,17,.35); --white-ring:#B8B5AD;
+  --sans:"Inter Tight",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --dot:"Doto",ui-monospace,monospace;
+  --glide:cubic-bezier(.2,.8,.2,1);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121312; --surface:#1D1E1C; --thumb:#262725; --dim:#1A1B19;
+    --ink:#F2F3F0; --on-ink:#111111; --title2:#9A9C98; --muted:#A8AAA6; --muted-dark:#5E605E;
+    --outline:#6E706C; --divider:#3A3B39; --disabled:#4A4B49; --on-disabled:#9A9C98;
+    --accent:#FF5A3D; --accent-text:#FF8A73;
+    --hatch-base:#3A3B39; --hatch-line:#555652; --wait:#262725; --wait-line:#4A4B49;
+    --tick:#8C8E8A; --tick-lab:#6E706C; --dots:#3A3B39; --dots-on:#F2F3F0; --digit2:#6E706C;
+    --ph:#6E706C; --veil:rgba(0,0,0,.55); --white-ring:#6E706C; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121312; --surface:#1D1E1C; --thumb:#262725; --dim:#1A1B19;
+  --ink:#F2F3F0; --on-ink:#111111; --title2:#9A9C98; --muted:#A8AAA6; --muted-dark:#5E605E;
+  --outline:#6E706C; --divider:#3A3B39; --disabled:#4A4B49; --on-disabled:#9A9C98;
+  --accent:#FF5A3D; --accent-text:#FF8A73;
+  --hatch-base:#3A3B39; --hatch-line:#555652; --wait:#262725; --wait-line:#4A4B49;
+  --tick:#8C8E8A; --tick-lab:#6E706C; --dots:#3A3B39; --dots-on:#F2F3F0; --digit2:#6E706C;
+  --ph:#6E706C; --veil:rgba(0,0,0,.55); --white-ring:#6E706C; color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.4;font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+em{font-style:normal;font-family:inherit}
+:focus-visible{outline:2px solid #E0331B;outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+svg.ic{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hatch{background-color:var(--hatch-base);background-image:repeating-linear-gradient(135deg,var(--hatch-line) 0 5px,transparent 5px 11px)}
+.pdot{width:7px;height:7px;border-radius:4px;background:var(--accent);flex:none;display:inline-block}
+
+.wrap{max-width:480px;margin:0 auto;padding-block:calc(52px + env(safe-area-inset-top)) calc(124px + env(safe-area-inset-bottom));padding-left:max(20px, env(safe-area-inset-left, 0px));padding-right:max(20px, env(safe-area-inset-right, 0px))}
+.hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+.ttl{font-size:34px;font-weight:750;letter-spacing:-.03em;line-height:1.02;min-width:0}
+.ttl>span{display:block}
+.ttl2{margin-top:6px;font-size:20px;font-weight:600;letter-spacing:-.01em;line-height:1.2;color:var(--title2)}
+.hd-act{display:flex;align-items:center;gap:8px;flex:none}
+.hbtn{width:44px;height:44px;border-radius:22px;background:var(--ink);color:var(--on-ink);display:flex;align-items:center;justify-content:center;flex:none}
+.hbtn.ghost{background:none;color:var(--ink);border:1.5px solid var(--ink)}
+.hbtn svg.ic{width:18px;height:18px}
+.hbtn[hidden]{display:none}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid var(--wait-line);border-top-color:var(--ink);animation:sp .7s linear infinite;display:none}
+.spin.on{display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.offline{display:flex;gap:8px;align-items:baseline;margin:-8px 0 16px;font-size:13px;font-weight:650;color:var(--accent-text)}
+.offline[hidden]{display:none}
+
+.view{animation:vin .2s var(--glide)}
+@keyframes vin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.search{position:relative;margin-bottom:12px}
+.search input{width:100%;height:48px;border-radius:24px;border:0;background:var(--surface);padding:0 16px 0 46px;font-size:16px;font-weight:500}
+.search input::placeholder{color:var(--ph)}
+.search input:focus{outline:2px solid var(--ink)}
+.search svg{position:absolute;left:16px;top:14px;width:20px;height:20px;color:var(--muted)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{height:44px;padding:0 16px;border-radius:22px;border:1.5px solid var(--outline);font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--on-ink);font-weight:650}
+
+.rows{list-style:none;display:flex;flex-direction:column;gap:8px}
+.rows>li{display:flex;flex-direction:column;gap:6px}
+.row-m,.row-s{display:flex;align-items:center;gap:14px;padding:10px 14px 10px 10px;border-radius:22px;background:var(--surface);width:100%;text-align:left;transition:transform .15s}
+.row-s{padding:12px 16px 12px 12px}
+.row-m:active,.row-s:active{transform:scale(.985)}
+.mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.nm{font-size:16px;font-weight:650;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ds{font-size:13px;color:var(--muted);line-height:1.35}
+.warn{display:inline-flex;align-items:center;gap:6px;color:var(--accent-text);font-weight:650}
+.warn-line{display:flex;gap:8px;align-items:baseline;padding:0 14px 4px 12px;font-size:13px;line-height:1.4;color:var(--accent-text);font-weight:650}
+.warn-line .pdot{transform:translateY(-1px)}
+.tm{font-size:26px;font-weight:500;letter-spacing:-.03em;white-space:nowrap;flex:none}
+.tm i,.big i{font-style:normal;font-size:14px;font-weight:600;letter-spacing:0;color:var(--muted);margin:0 5px 0 2px}
+.tm i:last-child,.big i:last-child{margin-right:0}
+.tm.none{color:var(--muted)}
+.big{font-size:30px;font-weight:500;letter-spacing:-.04em;white-space:nowrap;flex:none}
+.cost{font-size:22px;font-weight:500;letter-spacing:-.03em;white-space:nowrap;flex:none}
+.pill-sm{height:44px;padding:0 16px;border-radius:22px;border:1.5px solid var(--outline);display:inline-flex;align-items:center;font-size:14px;font-weight:650;flex:none;white-space:nowrap}
+.thumb{width:56px;height:56px;border-radius:16px;background:var(--thumb);flex:none;display:flex;align-items:center;justify-content:center;color:var(--muted);overflow:hidden;position:relative}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb.empty{background:none;border:1.5px dashed var(--outline)}
+.thumb.blk::after{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.6) 0 5px,transparent 5px 11px)}
+.swatch{display:flex}
+.swatch span{width:28px;height:28px;border-radius:14px;flex:none}
+.swatch span+span{margin-left:-10px;box-shadow:0 0 0 2px var(--thumb)}
+.disc{width:44px;height:44px;border-radius:22px;flex:none}
+.light-ring{box-shadow:inset 0 0 0 1px var(--white-ring)}
+.disc.short{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.55) 0 5px,transparent 5px 11px)}
+.month{font-size:18px;font-weight:700;margin:20px 0 10px}
+.month:first-child{margin-top:0}
+.section{font-size:13px;font-weight:500;color:var(--muted);margin:24px 4px 8px}
+.section:first-child{margin-top:0}
+
+.timebtn{margin-top:20px;width:100%;height:56px;border-radius:28px;background:var(--ink);color:var(--on-ink);display:flex;align-items:center;gap:12px;padding:0 8px 0 20px;font-size:16px;font-weight:650;text-align:left}
+.timebtn svg.ticks{flex:1 1 170px;width:170px;max-width:100%;height:24px;min-width:0}
+.timebtn .go{width:40px;height:40px;border-radius:20px;background:var(--on-ink);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none}
+.timebtn .go svg{width:16px;height:16px}
+
+.group{background:var(--surface);border-radius:24px;overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 16px;width:100%;text-align:left}
+.row+.row{border-top:1px solid var(--divider)}
+.row .lbl{flex:1;min-width:0}
+.row .lbl small{display:block;font-size:13px;color:var(--muted)}
+.row.danger{color:var(--accent-text);font-weight:650}
+.row svg.ic{color:var(--muted);width:20px;height:20px}
+.row .in{background:var(--thumb)}
+.foot{font-size:13px;color:var(--muted);margin:8px 6px 0;line-height:1.45}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;letter-spacing:.14em;font-weight:600}
+.seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+.seg button{height:44px;padding:0 14px;border-radius:22px;border:1.5px solid var(--outline);font-size:14px;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--on-ink);font-weight:650}
+.x{width:44px;height:44px;border-radius:22px;border:1.5px solid var(--outline);display:flex;align-items:center;justify-content:center;color:var(--ink);flex:none}
+.x svg.ic{width:18px;height:18px}
+
+.empty{padding:28px 8px 10px}
+.empty h3{font-size:18px;font-weight:650;margin-bottom:6px}
+.empty p{font-size:15px;color:var(--muted);max-width:320px;margin-bottom:16px;line-height:1.45}
+
+.tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(28px + env(safe-area-inset-bottom));width:min(440px, calc(100% - 40px));height:60px;background:var(--ink);border-radius:30px;padding:0 8px;display:flex;align-items:center;justify-content:space-between;z-index:30}
+.tab{height:44px;min-width:52px;border-radius:22px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted-dark);transition:background .18s,color .18s}
+.tab.on{background:var(--bg);color:var(--ink);padding:0 16px 0 12px;font-size:14px;font-weight:650}
+.tabbar[hidden]{display:none}
+
+.btn{height:60px;border-radius:30px;background:var(--ink);color:var(--on-ink);font-weight:650;font-size:17px;padding:0 24px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .15s}
+.btn:active{transform:scale(.98)}
+.btn.wide{width:100%}
+.btn.sec{background:var(--surface);color:var(--ink);border:1.5px solid var(--ink);height:52px;font-size:16px}
+.btn.ghost{background:none;color:var(--muted);height:44px}
+.btn.danger{background:none;color:var(--accent-text);height:44px;padding:0 4px}
+.btn[disabled]{background:var(--disabled);color:var(--on-disabled);border-color:transparent;pointer-events:none}
+.btn.sec[disabled]{background:var(--surface);color:var(--disabled);border:1.5px solid var(--wait-line)}
+.btn.arrow{justify-content:space-between;padding:0 10px 0 24px}
+.btn .go{width:40px;height:40px;border-radius:20px;background:var(--on-ink);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none}
+.btn .go svg{width:16px;height:16px}
+.btn[disabled] .go{background:var(--on-disabled);color:var(--disabled)}
+.btns{display:flex;gap:8px}
+.btns .btn{flex:1}
+.btn-col{display:flex;flex-direction:column;gap:10px}
+
+.veil{position:fixed;inset:0;background:var(--veil);z-index:50;display:flex;align-items:flex-end;justify-content:center;animation:fade .18s}
+@keyframes fade{from{opacity:0}}
+.sheet{background:var(--bg);width:100%;max-width:520px;border-radius:28px 28px 0 0;max-height:96vh;max-height:96dvh;display:flex;flex-direction:column;animation:up .26s var(--glide);padding-bottom:env(safe-area-inset-bottom)}
+@keyframes up{from{transform:translateY(100%)}}
+.sh-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:24px 20px 8px;gap:12px;flex:none}
+.sh-hd h2{font-size:30px;font-weight:750;letter-spacing:-.03em;line-height:1.05}
+.sh-hd h2 span{display:block;margin-top:6px;font-size:18px;font-weight:600;letter-spacing:-.01em;color:var(--title2)}
+.sh-bd{overflow-y:auto;padding:8px 20px 20px;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:12px}
+.sh-ft{padding:12px 20px 24px;flex:none}
+.sh-bd>.fl:first-child{margin-top:0}
+.fl{display:block;font-size:13px;font-weight:500;color:var(--muted);margin:4px 4px -4px}
+.in{width:100%;height:48px;border-radius:24px;border:0;background:var(--surface);padding:0 18px;font-size:16px;font-weight:500}
+textarea.in{height:auto;min-height:84px;border-radius:22px;padding:13px 18px;resize:vertical;line-height:1.4}
+.in:focus{outline:2px solid var(--ink)}
+.in::placeholder{color:var(--ph)}
+select.in{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%235E605E' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:36px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.suf{position:relative}
+.suf span{position:absolute;right:18px;top:14px;color:var(--muted);font-size:15px;pointer-events:none}
+.suf .in{padding-right:46px}
+.hexrow{display:flex;gap:8px;align-items:center}
+.hexrow input[type=color]{width:48px;height:48px;border:0;border-radius:50%;background:none;padding:0;cursor:pointer;flex:none}
+.hexrow input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+.hexrow input[type=color]::-webkit-color-swatch{border:0;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.hexrow input[type=color]::-moz-color-swatch{border:0;border-radius:50%}
+.stepper{display:flex;gap:6px;flex-wrap:wrap}
+.stepper button{height:44px;padding:0 14px;border-radius:22px;border:1.5px solid var(--outline);font-size:14px;font-weight:500}
+.order{display:flex;gap:6px;flex-wrap:wrap}
+
+.tile{border-radius:24px;background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.tile>label,.tile .lb{font-size:13px;color:var(--muted)}
+.tile .bare{border:0;background:none;padding:0;font-size:18px;font-weight:600;color:var(--ink);width:100%}
+.tile .bare:focus{outline:none}
+.tile textarea.bare{resize:vertical;min-height:44px;font-size:16px;font-weight:500;line-height:1.4}
+.tile-hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tile-hd small{font-size:12px;color:var(--muted)}
+.bignum{display:flex;align-items:baseline;gap:6px}
+.bignum input{border:0;background:none;padding:0;font-size:56px;font-weight:500;letter-spacing:-.04em;color:var(--ink);text-align:right;width:76px}
+.bignum input.w{font-size:44px;width:100px}
+.bignum input:focus{outline:none}
+.bignum input::placeholder{color:var(--ph)}
+.bignum input[readonly]{color:var(--muted)}
+.bignum b{font-size:20px;font-weight:600;margin-right:12px}
+.tile.dark{background:var(--ink);color:var(--on-ink);justify-content:space-between}
+.tile.dark .lb{color:var(--muted-dark)}
+.tile.dark .v{font-size:36px;font-weight:500;letter-spacing:-.04em;line-height:1}
+.imp{height:116px;border-radius:24px;border:1.5px dashed var(--outline);background-color:var(--dim);background-image:radial-gradient(circle,var(--dots) 1.2px,transparent 1.5px);background-size:10px 10px;display:flex;align-items:center;gap:14px;padding:0 18px;text-align:left;width:100%}
+.imp .up{width:48px;height:48px;border-radius:24px;background:var(--ink);color:var(--on-ink);display:flex;align-items:center;justify-content:center;flex:none}
+.imp .tx{display:flex;flex-direction:column;gap:4px;background:var(--dim);padding:4px 6px;border-radius:8px}
+.imp .tx b{font-size:17px;font-weight:700}
+.imp .tx span{font-size:13px;color:var(--muted);line-height:1.35}
+.imp-ok{border-radius:24px;background:var(--surface);display:flex;align-items:center;gap:14px;padding:10px 8px 10px 10px}
+.imp-ok .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.imp-ok .tx b{font-size:15px;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.imp-ok .tx span{font-size:13px;color:var(--muted)}
+.linkbtn{height:44px;padding:0 10px;font-size:14px;font-weight:650;text-decoration:underline;flex:none}
+.or-line{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.or-line span{flex:1;height:1px;background:var(--divider)}
+.fgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.fdisc{display:flex;flex-direction:column;align-items:center;gap:8px;padding:0;min-width:0}
+.fdisc .d{width:56px;height:56px;border-radius:28px;flex:none;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:650}
+.fdisc[aria-pressed="true"] .d{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--ink)}
+.fdisc[aria-pressed="true"] .d.light-ring{box-shadow:inset 0 0 0 1px var(--white-ring),0 0 0 3px var(--bg),0 0 0 5px var(--ink)}
+.fdisc .d.more{border:1.5px solid var(--outline)}
+.fdisc .t{display:flex;flex-direction:column;align-items:center;gap:1px;max-width:100%}
+.fdisc .t b{font-size:13px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fdisc .t span{font-size:12px;font-weight:600;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fdisc .t .lo{color:var(--accent-text);font-weight:650}
+.flist{display:flex;flex-direction:column;gap:8px}
+.frow{display:flex;align-items:center;gap:14px;padding:10px 16px 10px 10px;border-radius:22px;background:var(--surface);text-align:left;width:100%;border:2px solid transparent}
+.frow[aria-pressed="true"]{border-color:var(--ink)}
+.frow .disc{width:40px;height:40px}
+.frow .g{font-size:18px;font-weight:500;letter-spacing:-.02em;white-space:nowrap}
+.fg-row{display:flex;align-items:center;gap:12px;padding:8px 14px 8px 10px;border-radius:22px;background:var(--surface)}
+.fg-row .disc{width:32px;height:32px}
+.fg-row input{width:80px;border:0;background:none;text-align:right;font-size:24px;font-weight:500;letter-spacing:-.03em;padding:0}
+.fg-row input:focus{outline:none}
+.textbtn{align-self:flex-start;height:44px;padding:0 4px;font-size:14px;font-weight:650;text-decoration:underline}
+.note{font-size:13px;color:var(--muted);line-height:1.4;padding:0 4px}
+.photo{display:flex;align-items:center;gap:12px}
+
+.tp{position:fixed;inset:0;background:var(--bg);z-index:55;overflow-y:auto;animation:fade .18s}
+.tp-in{max-width:480px;margin:0 auto;padding:calc(52px + env(safe-area-inset-top)) 20px calc(120px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:20px}
+.tp-in .hd{margin-bottom:0}
+.pills2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pill{height:48px;border-radius:24px;border:1.5px solid var(--outline);font-size:14px;font-weight:500}
+.pill[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--on-ink);font-weight:650}
+.field{position:relative;overflow:hidden;height:220px;margin:0 -20px;background-image:radial-gradient(circle,var(--dots) 1.3px,transparent 1.6px);background-size:11px 11px;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:height .26s var(--glide)}
+.field.small{height:104px}
+.field .scan{position:absolute;inset:0;background-image:radial-gradient(circle,var(--dots-on) 1.6px,transparent 1.9px);background-size:11px 11px;background-position:center;opacity:.22;animation:scan .75s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes scan{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.field.calc .digits{animation:blink .25s steps(2) 3}
+@keyframes blink{50%{opacity:.3}}
+.digits{position:relative;display:flex;flex-direction:column;align-items:center}
+.digits>div{display:flex;align-items:baseline;gap:8px}
+.digits i{font-style:normal;width:40px;font-size:22px;font-weight:650;color:var(--muted)}
+.digits i.do{width:auto;margin-bottom:4px}
+.dot-num{font-family:var(--dot);font-weight:900;font-size:96px;line-height:.95;letter-spacing:.02em;color:var(--ink)}
+.dot-num.grey{color:var(--digit2)}
+.field-btn{position:absolute;inset:0;padding:0 20px;display:flex;align-items:center;justify-content:space-between;text-align:left}
+.field-btn .dot-num{font-size:64px;line-height:1}
+.field-btn .pill-sm{background:var(--surface);border-color:var(--ink)}
+.conv{text-align:center;font-size:13px;color:var(--muted);margin-top:-6px}
+.dial{display:flex;align-items:center;gap:8px}
+.rbtn{width:56px;height:56px;border-radius:28px;border:1.5px solid var(--ink);background:var(--surface);display:flex;align-items:center;justify-content:center;flex:none}
+.rbtn[disabled]{border-color:var(--wait-line);color:var(--disabled)}
+.rbtn svg{width:16px;height:16px}
+.ruler{--shift:110px;flex:1;height:60px;border-radius:30px;background:#111111;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;padding:0 18px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.ruler.drag{cursor:grabbing}
+.ruler .tk{position:absolute;left:0;right:0;pointer-events:none;background-image:repeating-linear-gradient(90deg,#5A5C5A 0 1.5px,transparent 1.5px var(--gap));background-position:calc(var(--shift) - .75px) 0;transition:background-position .16s ease-out}
+.ruler.drag .tk{transition:none}
+.ruler .t1{top:6px;height:10px;--gap:28px}.ruler .t2{top:6px;height:6px;--gap:7px}
+.ruler .b1{bottom:6px;height:10px;--gap:28px}.ruler .b2{bottom:6px;height:6px;--gap:7px}
+.ruler .mark{position:absolute;left:50%;top:0;width:2px;height:60px;margin-left:-1px;background:#E0331B;pointer-events:none}
+.ruler .rl{position:relative;font-size:13px;color:#8C8E8A;pointer-events:none;white-space:nowrap}
+.ruler .rl.cur{font-size:15px;font-weight:700;color:#FFFFFF;background:#111111;padding:0 6px}
+.chips4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tp-cta{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(28px + env(safe-area-inset-bottom));width:min(440px, calc(100% - 40px));z-index:56}
+.res{display:flex;flex-direction:column;gap:12px;margin-top:-4px}
+.card{border-radius:24px;background:var(--surface);padding:16px;display:flex;flex-direction:column;gap:14px}
+.sum{display:flex;justify-content:space-between;align-items:flex-end}
+.sum>div{display:flex;flex-direction:column;gap:2px}
+.sum>div:last-child{align-items:flex-end}
+.sum .lb{font-size:13px;color:var(--muted)}
+.sum .v1{font-size:44px;font-weight:500;letter-spacing:-.04em;line-height:1}
+.sum .tm{font-size:30px}
+.bar{position:relative}
+.bar .g{display:grid;gap:4px;height:28px}
+.bar .g span{background:var(--ink);border-radius:6px}
+.bar .g span:first-child{border-radius:14px 6px 6px 14px}
+.bar .g span.spare{background:var(--wait);border:1.5px dashed var(--wait-line);border-radius:6px 14px 14px 6px}
+.bar .g span:only-child,.bar .g span.solo{border-radius:14px}
+.bar .end{position:absolute;right:-1px;top:-6px;width:2px;height:40px;background:var(--accent)}
+.bar-l{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.opt-h{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px}
+.opt-h h2{font-size:13px;font-weight:500;color:var(--muted)}
+.opt-h small{font-size:12px;color:var(--muted)}
+.opt{display:flex;align-items:center;gap:14px;padding:10px 14px 10px 10px;border-radius:22px;background:var(--surface);border:2px solid transparent;text-align:left;width:100%}
+.opt[aria-pressed="true"]{border-color:var(--ink)}
+.opt .thumbs{display:flex;flex:none}
+.opt .thumbs .thumb{width:48px;height:48px;border-radius:14px}
+.opt .thumbs .thumb+.thumb{margin-left:-20px;box-shadow:0 0 0 2px var(--surface)}
+.opt .rd{width:24px;height:24px;border-radius:12px;border:1.5px solid var(--outline);flex:none;display:flex;align-items:center;justify-content:center}
+.opt[aria-pressed="true"] .rd{background:var(--ink);border-color:var(--ink);color:var(--on-ink)}
+.opt .rd svg{width:12px;height:12px;stroke-width:2.6}
+.opt[aria-pressed="false"] .rd svg{display:none}
+.tnote{display:flex;gap:8px;align-items:baseline;padding:0 4px;font-size:13px;line-height:1.4}
+.tnote .pdot{transform:translateY(-1px)}
+.tnote.muted{color:var(--muted)}
+.rise{animation:rise .24s var(--glide) both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));transform:translate(-50%,16px);background:var(--ink);color:var(--on-ink);padding:12px 18px;border-radius:24px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s var(--glide);z-index:80;width:max-content;max-width:calc(100vw - 40px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.gate{position:fixed;inset:0;background:var(--bg);z-index:60;overflow-y:auto;display:flex;justify-content:center}
+.gate-in{width:100%;max-width:420px;padding:calc(64px + env(safe-area-inset-top)) 20px calc(30px + env(safe-area-inset-bottom));display:flex;flex-direction:column;min-height:100%}
+.gate .logo{display:block;width:56px;height:56px;border-radius:14px;margin-bottom:24px}
+.gate h1{font-size:34px;font-weight:750;letter-spacing:-.03em;line-height:1.05}
+.gate .lead{color:var(--muted);font-size:15px;margin:10px 0 24px;max-width:340px}
+.gate .in{margin-bottom:8px}
+.gate .btn.wide{margin-top:4px}
+.msg{border-radius:18px;padding:12px 14px;font-size:14px;margin-bottom:12px;background:var(--surface);color:var(--accent-text);font-weight:600}
+.msg.ok{color:var(--ink);font-weight:500}
+.alt{margin-top:14px;font-size:15px;color:var(--muted)}
+.alt button{color:var(--ink);font-weight:650;text-decoration:underline;text-underline-offset:3px;min-height:44px}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin:18px 0}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--divider)}
+.langs{display:flex;gap:6px;margin-top:auto;padding-top:24px}
+.boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:70}
+.boot .spin{display:block;width:22px;height:22px;border-width:2.2px}
+.demo-bar{background:var(--surface);font-size:13px;color:var(--muted);border-radius:22px;padding:0 6px 0 16px;min-height:44px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.demo-bar button{font-weight:650;color:var(--ink);text-decoration:underline;min-height:44px;padding:0 10px;white-space:nowrap;flex:none}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app" hidden>
+  <div id="demoBar"></div>
+  <header class="hd">
+    <h1 class="ttl"><span id="ttl"></span><span class="ttl2" id="sub"></span></h1>
+    <div class="hd-act"><span class="spin" id="spin" role="status" aria-label=""></span><button class="hbtn ghost" id="setBtn" data-act="settings" aria-label=""></button><button class="hbtn" id="addBtn" aria-label=""></button></div>
+  </header>
+  <p class="offline" id="offline" hidden><span class="pdot" aria-hidden="true"></span><span id="offTxt"></span></p>
+  <main id="view"></main>
+</div>
+<nav class="tabbar" id="tabbar" role="tablist" hidden></nav>
+<div id="gate"></div>
+<div id="timeRoot"></div>
+<div id="sheetRoot"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="boot" id="boot"><span class="spin"></span></div>
+
+<script type="module">
+const APP_VERSION = "3.0.0";
+const SUPABASE_JS = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/+esm";
+const LS = { theme:"3dprints.theme", cfg:"3dprints.supabase", ui:"3dprints.ui" };
+const MATERIALS = ["PLA","Pure PLA","PLA+","PETG","ABS","ASA","TPU","PA-CF","PC","Resin","Other"];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const lsGet = k => { try { return localStorage.getItem(k); } catch(e) { return null; } };
+const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch(e) {} };
+const safeUrl = u => (u && /^https?:\/\//i.test(String(u).trim())) ? String(u).trim() : "";
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : "id-" + Date.now() + Math.random().toString(16).slice(2));
+const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const IC = {
+  list:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
+  spool:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/><path d="M12 3.5v5.5"/>',
+  done:'<circle cx="12" cy="12" r="8.5"/><path d="m8.4 12.3 2.4 2.4 4.8-5"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  x:'<path d="M7 7l10 10M17 7 7 17"/>',
+  search:'<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/>',
+  cube:'<path d="M12 3.5 19.5 7.7v8.6L12 20.5l-7.5-4.2V7.7z"/><path d="M4.5 7.7 12 12l7.5-4.3M12 12v8.5"/>',
+  check:'<path d="m6 12.5 4 4 8-9"/>',
+  chev:'<path d="m9 6 6 6-6 6"/>',
+  bookmark:'<path d="M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v15.5L12 16.3l-6.5 4.2V5A1.5 1.5 0 0 1 7 3.5z"/>',
+  clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  up:'<path d="m6 15 6-6 6 6"/>', down:'<path d="m6 9 6 6 6-6"/>', top:'<path d="M6 5h12M12 9v10M7 14l5-5 5 5"/>',
+  copy:'<rect x="8" y="8" width="11" height="11" rx="3"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"/>',
+  photo:'<rect x="3.5" y="5" width="17" height="14" rx="3.5"/><circle cx="9" cy="10" r="1.6"/><path d="m4.5 17 4.5-4 4 3.5 2.5-2 4 3"/>',
+  undo:'<path d="M9 7 5 11l4 4"/><path d="M5 11h9a5 5 0 0 1 0 10h-2"/>'
+};
+const ic = (k, cls) => '<svg class="ic' + (cls ? " " + cls : "") + '" viewBox="0 0 24 24" aria-hidden="true">' + IC[k] + '</svg>';
+
+const STR = {
+en:{
+  appTag:"Print queue and filament spools — shared, on every phone.",
+  h_queue:"Up <em>next</em>", h_backlog:"Some<em>day</em>", tab_backlog:"Someday", h_spools:"Your <em>spools</em>", h_done:"Already <em>printed</em>", h_settings:"Settings",
+  tab_queue:"Queue", tab_spools:"Spools", tab_done:"Printed", tab_settings:"Settings",
+  queue:"Queue", backlog:"Someday", search_models:"Search models", search_spools:"Search spools",
+  any_len:"Any length", under:"under {h} h", any_fil:"Any spool", all:"All",
+  ctx_queue:"{n} · {time} · {cost}", ctx_backlog:"{n} for later", ctx_spools:"{n} · {kg} kg · {cost}",
+  ctx_done:"{n} in total", ctx_settings:"version {v}",
+  in_queue:{one:"{n} queued",other:"{n} queued"},
+  models:{one:"{n} model",other:"{n} models"},
+  spools:{one:"{n} spool",other:"{n} spools"},
+  prints:{one:"{n} print",other:"{n} prints"},
+  add_model:"Add model", add_spool:"Add spool", new_model:"New <em>model</em>", edit_model:"Edit <em>model</em>",
+  new_spool:"New <em>spool</em>", edit_spool:"Edit <em>spool</em>",
+  name:"Name", name_ph:"Cable organiser", link:"Link", link_ph:"https://makerworld.com/…",
+  picture:"Picture", upload:"Upload photo", img_ph:"or paste an image address", no_pic:"No picture",
+  time:"Print time (from your slicer)", hours:"h", minutes:"min", list:"List",
+  filament:"Filament", attach:"Add filament", grams:"g", notes:"Notes", notes_ph:"0.2 mm, no supports, print the tail separately",
+  cost_fil:"Filament", cost_power:"Power", cost_mat:"Material", cost_total:"Cost per print",
+  save:"Save", add:"Add", delete:"Delete", cancel:"Cancel", close:"Close",
+  order:"Order", up:"Up", down:"Down", top:"To the top",
+  brand:"Brand", brand_ph:"Bambu Lab", material:"Material", color:"Colour", color_ph:"Matte Charcoal",
+  price_kg:"Price per kg", left:"Left", capacity:"Full spool", full:"Full", empty_sp:"Empty",
+  spool_note_ph:"Dry at 45°C, best at 215°C",
+  per_kg:"{p}/kg", of:"of {g} g", low:"low", short:"{g} g short", missing:"spool removed",
+  mark_done:"Mark as printed", undo:"Undo",
+  t_deducted:"Printed · −{g} g from spools", t_done:"Printed", t_undone:"Undone, grams restored",
+  t_saved:"Saved", t_added_q:"Added to the queue", t_added_b:"Added for later", t_deleted:"Deleted",
+  t_moved_q:"Moved to the queue", t_moved_b:"Moved to later", t_spool_added:"Spool added",
+  t_offline:"No connection — that change wasn't saved", t_need_name:"Enter a name", t_need_spool:"Enter a brand or a colour",
+  t_photo:"Photo uploaded", t_photo_big:"That photo is over 8 MB", t_upload_fail:"Couldn't upload the photo",
+  t_copied:"Copied", t_updated:"Up to date", t_code_new:"New code ready",
+  e_queue_t:"Queue is <em>waiting</em>", e_queue_p:"Add the model you want to print next, or move something over from Someday.",
+  tb_ask:"How much time do you have?", tb_hint:"See what from the queue you can finish", tb_title:"How much <em>time</em>?",
+  tb_have:"You have {time} · you can print", tb_have0:"You have {time}", tb_fits:"{n} of {total} queued fit · {left} to spare", tb_none:"Nothing in the queue fits",
+  tb_shortest:"The shortest print takes {time}", tb_notimes:"Queued models have no print time yet", tb_clear:"Clear time",
+  tb_apply:"Show in the queue", tb_left:"{time} to spare", tb_queue_fit:"From the queue · {n} of {total}",
+  tb_none_long:"Everything queued takes longer. Enter more time or look below.", tb_backlog_fit:"From Someday, these fit too",
+  e_backlog_t:"Nothing <em>for later</em>", e_backlog_p:"Models you'll print some day, just not now, live here.",
+  e_spools_t:"Empty <em>shelf</em>", e_spools_p:"Add the spools you have at home. Models take their colours and cost from them.",
+  e_done_t:"Nothing <em>yet</em>", e_done_p:"Printed models land here, and their grams come off the spools.",
+  e_search:"Nothing here matches the search.", clear:"Clear filters",
+  this_month:"This month", spent:"spent on prints", hours_total:"hours printing", grams_total:"grams of filament",
+  s_workshop:"Workshop", s_people:"People", s_code:"Invite code", s_code_foot:"Your partner creates an account, then enters this code. You'll both see the same spools and queue.",
+  s_new_code:"New code", s_rename:"Rename", s_costs:"Costs", currency:"Currency", watts:"Average power draw", kwh:"Price per kWh",
+  s_costs_foot:"A Bambu A1 with AMS averages about 90 W. That's {p} per hour of printing.",
+  s_look:"Appearance", theme:"Theme", th_light:"Light", th_dark:"Dark", th_system:"System", language:"Language",
+  s_data:"Data", export:"Download .json backup", import:"Load .json backup", refresh:"Refresh",
+  s_data_foot:"A backup holds spools, models and costs. Loading one adds them to the workshop.",
+  s_account:"Account", signout:"Sign out", wipe:"Delete all workshop data",
+  wipe_t:"Delete <em>everything</em>?", wipe_p:"Every spool and model goes — for you and your partner. Type {w} to confirm.", wipe_word:"DELETE",
+  del_model_t:"Delete <em>model</em>?", del_model_p:"“{n}” leaves your lists. Spools stay as they are.",
+  del_spool_t:"Delete <em>spool</em>?", del_spool_p:"{n} will be removed. {k}", del_spool_used:"Models using it ({c}) will show it as removed.",
+  rename_t:"Workshop <em>name</em>",
+  imported:"Loaded {f} and {m}", bad_file:"That isn't a backup from this app",
+  g_welcome:"Your <em>workshop</em>", g_signin:"Sign in", g_signup:"Create account", g_email:"Email", g_pass:"Password",
+  g_no_acc:"No account yet?", g_has_acc:"Already have one?", g_create:"Create one", g_login:"Sign in",
+  g_forgot:"Forgot password", g_reset_sent:"If that account exists, a reset link is in your inbox.",
+  g_reset_t:"New <em>password</em>", g_reset_save:"Set password", g_pass_short:"Use at least 6 characters.",
+  g_fill:"Enter an email and a password.", g_confirm:"Account created. Confirm your address from the email, then sign in.",
+  g_demo:"Show an example", g_working:"One moment…",
+  g_hh_t:"One <em>workshop</em>, two people", g_hh_p:"A workshop is a shared list of spools and prints. Start a new one or join with your partner's code.",
+  g_hh_new:"Start a workshop", g_hh_code:"Invite code", g_hh_join:"Join", g_bad_code:"No workshop has that code.",
+  g_db_t:"Database <em>isn't answering</em>", g_db_p:"You're signed in, but the database refused. Usually the Supabase project is paused or the SQL script hasn't been run.",
+  g_retry:"Try again", g_conn_t:"Connect a <em>database</em>", g_conn_p:"Paste the project URL and public key from Supabase → Project Settings → API.",
+  g_url:"Project URL", g_key:"Public key (publishable / anon)", g_connect:"Connect", g_bad_cfg:"The URL starts with https:// and the key is a long string.",
+  g_other_db:"Different database",
+  demo_on:"Example data — nothing is saved", demo_exit:"Leave", demo_reset:"Start over", demo_reset_done:"Example reset",
+  join_warn:"You'll move to another workshop. Spools in the current one stay where they are.",
+  g_cdn_p:"Couldn't load the sign-in library. Check your internet and try again.",
+  live:"live", offline:"offline"
+}};
+Object.assign(STR.en, {
+  h_queue:"Queue", h_backlog:"Saved", h_spools:"Spools", h_done:"Printed", h_settings:"Settings",
+  tab_backlog:"Saved", backlog:"Saved",
+  new_model:"New model", edit_model:"Model", new_spool:"New spool", edit_spool:"Spool",
+  sub_new:"to the queue or for later", sub_empty_q:"nothing waiting", sub_backlog:"{n} for later",
+  e_queue_t:"The queue is empty", e_queue_p:"Tap + to add a model, or move one over from Saved.",
+  e_backlog_t:"Nothing here yet", e_backlog_p:"Save models for later here. Add time and weight once you've sliced them.",
+  e_spools_t:"No spools", e_spools_p:"Tap + to add a spool. Models take their colours and cost from it.",
+  e_done_t:"Nothing yet", e_done_p:"Printed models land here, and their grams come off the spools.",
+  wipe_t:"Delete everything?", del_model_t:"Delete model?", del_spool_t:"Delete spool?", rename_t:"Workshop name",
+  g_welcome:"Your workshop", g_reset_t:"New password", g_hh_t:"One workshop, two people", g_db_t:"Database isn't answering", g_conn_t:"Connect a database",
+  offline:"No connection to the database. Changes may not be saved.",
+  missing_spool:"That spool was removed. Pick another.", short_of:"{g} g short: {c}",
+  miss_tw:"Time and weight missing", miss_t:"Time missing", miss_w:"Weight missing", fill_in:"Fill in",
+  spool_short:"{g} g short for: {m}. Add a spool or move the model to later.", low:"low",
+  imp_t:"Load a slicer file", imp_p:"Sliced 3MF or G-code. Time, weight, filament and preview fill in by themselves.",
+  imp_ok:"Filled in: {what}", w_time:"time", w_weight:"weight", w_fil:"filament", w_img:"preview", imp_change:"Change",
+  imp_fail:"Couldn't read that file", imp_unsliced:"This file isn't sliced yet. Slice it, or type the time and weight.",
+  imp_nomatch:"No spool matches the colour in the file. Pick a filament below.", imp_reading:"Reading the file…", or_manual:"or type it in",
+  f_name_ph:"e.g. Headphone stand", f_link:"Model link, optional", f_link_ph:"printables.com/…",
+  f_time:"Print time", f_time_hint:"from the slicer, whole plate", f_weight:"Filament weight", cost:"Cost",
+  f_recent:"recently used", f_all:"All", f_multi:"Several filaments", f_single:"One filament",
+  f_pick_first:"Pick a filament to enter the weight.", fil_low:"too little", search_fil:"Search colour or material", f_photo:"Photo",
+  save_later:"Save for later", add_queue:"Add to queue", save_changes:"Save changes", undo_print:"Undo print",
+  note_name:"Enter a name to add the model.", note_data:"The queue needs print time and weight. Without them, save the model for later.", note_ok:"It goes to the end of the queue.",
+  in_queue_l:"In the queue", in_backlog_l:"In Saved", where:"List",
+  tp_sub:"I'll pick a print from the queue", tp_dur:"How many hours", tp_end:"Until what time", tp_less:"30 minutes less", tp_more:"30 minutes more",
+  tp_conv_dur:"Now {now}. Time runs out at {end}.", tp_conv_end:"Now {now}. That's {time} from now.", tp_show:"Show what fits", tp_calc:"Checking the queue…",
+  tp_have:"You have {time}, until {end}", tp_change:"Change", tp_ready:"Done at", tp_spare:"To spare", tp_now:"Now {t}", tp_limit:"Time's up {t}",
+  tp_what:"What to print", tp_fits:"fits in {t}", tp_best:"uses the time best", tp_inorder:"one after another", tp_spare_t:"{t} to spare", tp_nospare:"nothing to spare",
+  tp_none:"Nothing in the queue fits", tp_none_p:"The shortest print takes {t}. Tap the time above to add more.", tp_none_empty:"No queued model has a print time.",
+  tp_blocked:"{n} would fit too, but filament is short. Add a spool to unlock it.", tp_miss:"Won't fit: {n}.", tp_notime:"No print time: {n}.",
+  tp_print1:"Print: {n}", tp_printN:"Print {n} in a row", tp_moved:"Now first in the queue: {n}", tp_sr:"You have {time}, until {end}", tp_change_sr:"Change time. {s}"
+});
+const lang = "en";
+function t(k, v){
+  let s = (STR[lang] && STR[lang][k]) ?? STR.en[k] ?? k;
+  if (typeof s === "object") {
+    const n = v && v.n != null ? v.n : 0;
+    const r = new Intl.PluralRules(lang).select(n);
+    s = s[r] || s.other;
+  }
+  if (v) for (const key in v) s = s.split("{" + key + "}").join(v[key]);
+  return s;
+}
+const plain = html => String(html).replace(/<[^>]+>/g, "");
+
+let theme = lsGet(LS.theme) || "light";
+function applyTheme(){
+  const r = document.documentElement;
+  if (theme === "system") r.removeAttribute("data-theme"); else r.setAttribute("data-theme", theme);
+  r.lang = lang;
+}
+applyTheme();
+
+const nf = d => new Intl.NumberFormat("en-GB", {minimumFractionDigits:d, maximumFractionDigits:d});
+function money(n){
+  const cur = (S.settings.currency || "PLN").trim();
+  const v = nf(2).format(Math.round((+n || 0) * 100) / 100);
+  return /^[$£€]$/.test(cur) && lang === "en" ? cur + v : v + " " + cur;
+}
+function fmtTime(min){
+  min = Math.max(0, Math.round(+min || 0));
+  const h = Math.floor(min / 60), m = min % 60;
+  if (!h) return m + " min";
+  if (!m) return h + " h";
+  return h + " h " + m + " min";
+}
+const g0 = n => nf(0).format(Math.round(+n || 0));
+
+let S = { filaments:[], models:[], settings:{currency:"PLN", watts:90, kwh:1.29}, household:null, members:[] };
+let ui = Object.assign({ tab:"queue", q:"", maxMin:0, fil:"", mat:"", avail:0 }, (() => { try { return JSON.parse(lsGet(LS.ui) || "{}"); } catch(e) { return {}; } })());
+ui.q = ""; ui.avail = 0;
+if (!["queue","backlog","spools","done","settings"].includes(ui.tab)) ui.tab = "queue";
+const saveUi = () => lsSet(LS.ui, JSON.stringify({ tab:ui.tab }));
+let user = null, B = null, demo = false, online = true, animating = 0;
+
+const fil = id => S.filaments.find(f => f.id === id);
+const filName = f => [f.brand, f.material, f.color].filter(Boolean).join(" ") || "—";
+const filShort = f => f.color || [f.brand, f.material].filter(Boolean).join(" ") || "—";
+function costOf(m){
+  let mat = 0, grams = 0;
+  (m.uses || []).forEach(u => { const f = fil(u.fid); grams += +u.grams || 0; if (f) mat += (+u.grams || 0) / 1000 * (+f.pricePerKg || 0); });
+  const power = (+m.minutes || 0) / 60 * (+S.settings.watts || 0) / 1000 * (+S.settings.kwh || 0);
+  return { mat, power, total: mat + power, grams };
+}
+const queued = () => S.models.filter(m => !m.done && m.list === "queue").sort((a, b) => (a.order || 0) - (b.order || 0));
+const nextOrder = () => { const q = queued(); return q.length ? Math.max(...q.map(m => +m.order || 0)) + 1 : 1; };
+function luminance(hex){
+  const h = String(hex || "").replace("#", ""); if (h.length < 6) return .5;
+  const c = [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16) / 255).map(x => x <= .03928 ? x / 12.92 : Math.pow((x + .055) / 1.055, 2.4));
+  return .2126 * c[0] + .7152 * c[1] + .0722 * c[2];
+}
+
+const inFil = r => ({ id:r.id, brand:r.brand || "", material:r.material || "PLA", color:r.color || "", hex:r.hex || "#8E9188",
+  pricePerKg:+r.price_per_kg || 0, grams:+r.grams || 0, capacity:+r.capacity || 1000, notes:r.notes || "",
+  created:r.created_at ? Date.parse(r.created_at) : 0 });
+const outFil = f => ({ brand:f.brand || "", material:f.material || "PLA", color:f.color || "", hex:f.hex || "#8E9188",
+  price_per_kg:+f.pricePerKg || 0, grams:+f.grams || 0, capacity:+f.capacity || 1000, notes:f.notes || "" });
+const inModel = r => ({ id:r.id, name:r.name || "", link:r.link || "", image:r.image || "", minutes:+r.minutes || 0,
+  description:r.description || "", list:r.list === "queue" ? "queue" : "backlog", done:!!r.done, deducted:!!r.deducted,
+  doneAt:r.done_at ? Date.parse(r.done_at) : null, order:+r.sort_order || 0, uses:Array.isArray(r.uses) ? r.uses : [],
+  created:r.created_at ? Date.parse(r.created_at) : 0 });
+const outModel = m => ({ name:m.name || "", link:m.link || "", image:m.image || "", minutes:+m.minutes || 0,
+  description:m.description || "", list:m.list || "backlog", sort_order:+m.order || 0, uses:m.uses || [] });
+
+function sbBackend(sb){
+  const must = async p => { const r = await p; if (r.error) throw r.error; return r.data; };
+  let channel = null;
+  return {
+    async load(){
+      const mem = await must(sb.from("household_members").select("*").order("joined_at"));
+      const me = mem.find(m => m.user_id === user.id);
+      if (!me) return { noHousehold:true };
+      const [hh, st, f, m] = await Promise.all([
+        must(sb.from("households").select("*").eq("id", me.household_id).maybeSingle()),
+        must(sb.from("household_settings").select("*").eq("household_id", me.household_id).maybeSingle()),
+        must(sb.from("filaments").select("*").order("created_at")),
+        must(sb.from("models").select("*").order("created_at"))
+      ]);
+      let settings = st;
+      if (!settings) settings = await must(sb.from("household_settings").insert({ household_id: me.household_id }).select().single());
+      return { household:hh, members:mem, settings:{ currency:settings.currency, watts:+settings.watts, kwh:+settings.kwh },
+        filaments:f.map(inFil), models:m.map(inModel) };
+    },
+    async insModel(m){ return inModel(await must(sb.from("models").insert(outModel(m)).select().single())); },
+    async updModel(id, patch){ await must(sb.from("models").update(patch).eq("id", id)); },
+    async delModel(id){ await must(sb.from("models").delete().eq("id", id)); },
+    async insFil(f){ return inFil(await must(sb.from("filaments").insert(outFil(f)).select().single())); },
+    async updFil(id, patch){ await must(sb.from("filaments").update(patch).eq("id", id)); },
+    async delFil(id){ await must(sb.from("filaments").delete().eq("id", id)); },
+    async markPrinted(id, done){ await must(sb.rpc("mark_printed", { p_model:id, p_done:done })); },
+    async saveSettings(s){ await must(sb.from("household_settings").update({ currency:s.currency, watts:s.watts, kwh:s.kwh }).eq("household_id", S.household.id)); },
+    async createHousehold(name){ await must(sb.rpc("create_household", { p_name:name })); },
+    async joinHousehold(code){ await must(sb.rpc("join_household", { p_code:code })); },
+    async newCode(){ return await must(sb.rpc("new_household_code")); },
+    async rename(name){ await must(sb.rpc("rename_household", { p_name:name })); },
+    async wipe(){
+      await must(sb.from("models").delete().eq("household_id", S.household.id));
+      await must(sb.from("filaments").delete().eq("household_id", S.household.id));
+    },
+    async upload(file){
+      const ext = ((file.name || "").split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+      const path = user.id + "/" + Date.now() + "-" + Math.random().toString(36).slice(2, 7) + "." + ext;
+      await must(sb.storage.from("model-images").upload(path, file, { contentType:file.type || "image/jpeg" }));
+      return sb.storage.from("model-images").getPublicUrl(path).data.publicUrl;
+    },
+    subscribe(cb){
+      if (channel) sb.removeChannel(channel);
+      channel = sb.channel("3dprints-" + S.household.id);
+      ["filaments", "models", "household_settings"].forEach(tb =>
+        channel.on("postgres_changes", { event:"*", schema:"public", table:tb }, cb));
+      channel.subscribe(status => { online = status === "SUBSCRIBED"; renderCtx(); });
+    },
+    async signOut(){ if (channel) sb.removeChannel(channel); await sb.auth.signOut(); }
+  };
+}
+
+function demoBackend(){
+  const now = Date.now(), day = 864e5;
+  const F = [
+    ["Bambu Lab","PLA","Basic Black 10101","#1E1E1E",49.09,820,1000],
+    ["Bambu Lab","PLA","Basic Jade White 10100","#F7F8F3",49.09,1000,1000],
+    ["Bambu Lab","PLA","Matte Charcoal 11101","#3C3C3C",49.09,640,1000],
+    ["Bambu Lab","PLA","Matte Latte Brown 11800","#C9A987",56.21,1000,1000],
+    ["Bambu Lab","PLA","Wood Black Walnut 13107","#4C382A",124.43,620,1000],
+    ["Bambu Lab","Pure PLA","Pure Baby Blue","#A9D4E8",68.43,90,1000],
+    ["Bambu Lab","Pure PLA","Pure Apricot","#F2B48A",68.43,1000,1000],
+    ["Bambu Lab","PETG","Basic White 30106","#F2F2F0",63.53,1000,1000],
+    ["Sunlu","PLA","Olive Green","#6E7B3F",45,710,1000],
+    ["Bambu Lab","Other","Support for PLA/PETG 65102","#ECECEC",243.70,430,500]
+  ].map((r, i) => ({ id:"f" + i, brand:r[0], material:r[1], color:r[2], hex:r[3], pricePerKg:r[4], grams:r[5], capacity:r[6], notes:"", created:now - (20 - i) * day }));
+  const M = [
+    { name:"Cable organizer", minutes:160, list:"queue", order:1, uses:[{fid:"f4",grams:38},{fid:"f1",grams:6}], description:"0.2 mm, no supports" },
+    { name:"Ribbed planter", minutes:310, list:"queue", order:2, uses:[{fid:"f5",grams:120}] },
+    { name:"Pegboard hooks ×6", minutes:55, list:"queue", order:3, uses:[{fid:"f2",grams:22}] },
+    { name:"Moon lamp", minutes:720, list:"backlog", uses:[{fid:"f7",grams:180}] },
+    { name:"Headphone stand", minutes:240, list:"backlog", uses:[{fid:"f8",grams:95}] },
+    { name:"Bag clips ×10", minutes:70, list:"queue", done:true, doneAt:now - 2 * day, uses:[{fid:"f0",grams:28}] },
+    { name:"SD card box", minutes:95, list:"queue", done:true, doneAt:now - 6 * day, uses:[{fid:"f2",grams:31}] },
+    { name:"Key holder", minutes:130, list:"queue", done:true, doneAt:now - 40 * day, uses:[{fid:"f4",grams:44}] }
+  ].map((m, i) => Object.assign({ id:"m" + i, link:"", image:"", description:"", done:false, deducted:!!m.done, doneAt:null, order:0, created:now - (10 - i) * day }, m));
+  const data = { household:{ id:"demo", name:"Workshop", code:"EXAMPLE1" }, members:[{ user_id:"demo", email:"you@example.com" },{ user_id:"p", email:"partner@example.com" }],
+    settings:{ currency:"PLN", watts:90, kwh:1.29 }, filaments:F, models:M };
+  const clone = x => JSON.parse(JSON.stringify(x));
+  const wait = () => new Promise(r => setTimeout(r, 120));
+  return {
+    async load(){ await wait(); return clone(data); },
+    async insModel(m){ const r = Object.assign({}, m, { id:uid(), created:Date.now() }); data.models.push(clone(r)); return r; },
+    async updModel(id, patch){ const m = data.models.find(x => x.id === id); if (m) Object.assign(m, inModel(Object.assign({}, outModelBack(m), patch, { id }))); },
+    async delModel(id){ data.models = data.models.filter(x => x.id !== id); },
+    async insFil(f){ const r = Object.assign({}, f, { id:uid(), created:Date.now() }); data.filaments.push(clone(r)); return r; },
+    async updFil(id, patch){ const f = data.filaments.find(x => x.id === id); if (f) Object.assign(f, inFil(Object.assign({}, outFil(f), patch, { id }))); },
+    async delFil(id){ data.filaments = data.filaments.filter(x => x.id !== id); },
+    async markPrinted(id, done){
+      const m = data.models.find(x => x.id === id); if (!m) return;
+      if (done && !m.done){ if (!m.deducted) m.uses.forEach(u => { const f = data.filaments.find(x => x.id === u.fid); if (f) f.grams = Math.max(0, f.grams - u.grams); }); Object.assign(m, { done:true, deducted:true, doneAt:Date.now() }); }
+      else if (!done && m.done){ if (m.deducted) m.uses.forEach(u => { const f = data.filaments.find(x => x.id === u.fid); if (f) f.grams += u.grams; }); Object.assign(m, { done:false, deducted:false, doneAt:null }); }
+    },
+    async saveSettings(s){ data.settings = clone(s); },
+    async createHousehold(){}, async joinHousehold(){},
+    async newCode(){ return data.household.code = Math.random().toString(36).slice(2, 10).toUpperCase(); },
+    async rename(n){ data.household.name = n; },
+    async wipe(){ data.models = []; data.filaments = []; },
+    async upload(file){ return await new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(file); }); },
+    subscribe(){ online = true; },
+    async signOut(){}
+  };
+}
+const outModelBack = m => Object.assign(outModel(m), { done:m.done, deducted:m.deducted, done_at:m.doneAt ? new Date(m.doneAt).toISOString() : null, created_at:new Date(m.created || Date.now()).toISOString() });
+
+let busyN = 0;
+function busy(on){ busyN = Math.max(0, busyN + (on ? 1 : -1)); const s = $("spin"); if (s) s.classList.toggle("on", busyN > 0); }
+function toast(msg){ const el = $("toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("show"), 2600); }
+async function sync(fn, okMsg){
+  busy(true);
+  try { const r = await fn(); if (okMsg) toast(okMsg); return r; }
+  catch(e){ console.warn(e); toast(e && e.message && !/fetch/i.test(e.message) ? e.message : t("t_offline")); await reload(); return null; }
+  finally { busy(false); }
+}
+async function reload(){
+  try { const d = await B.load(); if (d.noHousehold) { householdGate(); return; } Object.assign(S, d); }
+  catch(e){ console.warn(e); }
+  render(false);
+}
+let rlTimer = null;
+function remoteChanged(){
+  clearTimeout(rlTimer);
+  rlTimer = setTimeout(async () => { if (animating) return remoteChanged(); await reload(); }, 450);
+}
+
+function artSpool(){ return '<img class="logo" src="icon.svg" alt="" width="56" height="56">'; }
+
+const pad2 = n => String(n).padStart(2, "0");
+const clock = x => { x = ((Math.round(x) % 1440) + 1440) % 1440; return Math.floor(x / 60) + ":" + pad2(x % 60); };
+const isLight = hex => luminance(hex) > .72;
+const fname = f => f ? (filShort(f) || "").replace(/\s+\d{4,}$/, "") : "—";
+const discStyle = (hex, short) => 'background-color:' + esc(hex || "#C0C2BE") + ';' + (short ? 'background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.55) 0 5px,transparent 5px 11px);' : "");
+function shortages(m){
+  return (m.uses || []).map(u => {
+    const f = fil(u.fid);
+    if (!f) return { missing:true };
+    const lack = (+u.grams || 0) - (+f.grams || 0);
+    return lack > 0 ? { f, lack } : null;
+  }).filter(Boolean);
+}
+const blocked = m => !m.done && shortages(m).length > 0;
+function filNames(m){
+  const n = [...new Set((m.uses || []).map(u => fil(u.fid)).filter(Boolean).map(fname))];
+  if (!n.length) return "";
+  return n.length === 1 ? n[0] : n.slice(0, -1).join(", ") + " and " + n[n.length - 1];
+}
+function timeHtml(min){
+  min = Math.round(+min || 0);
+  if (!min) return '<span class="tm none">–</span>';
+  const h = Math.floor(min / 60), mm = min % 60;
+  return '<span class="tm">' + (h ? h + '<i>h</i>' : "") + (mm || !h ? mm + '<i>min</i>' : "") + '</span>';
+}
+const fmtDate = ts => new Intl.DateTimeFormat(lang, { day:"numeric", month:"short" }).format(ts).replace(".", "");
+function missingText(m){
+  const t0 = !(+m.minutes), w0 = !costOf(m).grams;
+  return t0 && w0 ? t("miss_tw") : t0 ? t("miss_t") : w0 ? t("miss_w") : "";
+}
+
+const TABS = [ { id:"queue", icon:"list" }, { id:"backlog", icon:"bookmark" }, { id:"done", icon:"done" }, { id:"spools", icon:"spool" } ];
+function renderTabs(){
+  $("tabbar").innerHTML = TABS.map(x => {
+    const on = ui.tab === x.id;
+    return '<button class="tab' + (on ? " on" : "") + '" role="tab" data-tab="' + x.id + '" aria-selected="' + on + '"' + (on ? "" : ' aria-label="' + esc(t("tab_" + x.id)) + '"') + '>' +
+      ic(x.icon) + (on ? '<span>' + esc(t("tab_" + x.id)) + '</span>' : "") + '</button>';
+  }).join("");
+}
+function subtitleText(){
+  if (ui.tab === "queue"){
+    const q = queued(); const min = q.reduce((a, m) => a + (+m.minutes || 0), 0);
+    return q.length ? t("models", { n:q.length }) + (min ? ", " + fmtTime(min) : "") : t("sub_empty_q");
+  }
+  if (ui.tab === "backlog") return t("sub_backlog", { n:t("models", { n:S.models.filter(m => !m.done && m.list === "backlog").length }) });
+  if (ui.tab === "spools") return t("spools", { n:S.filaments.length });
+  if (ui.tab === "done") return t("prints", { n:S.models.filter(m => m.done).length });
+  return (S.household ? S.household.name + ", " : "") + t("ctx_settings", { v:APP_VERSION });
+}
+function renderCtx(){
+  const el = $("sub"); if (!el) return;
+  el.textContent = subtitleText();
+  const o = $("offline"); if (o){ o.hidden = online; $("offTxt").textContent = t("offline"); }
+  const s = $("spin"); if (s) s.classList.toggle("on", busyN > 0);
+}
+function render(animate = true){
+  if (!$("app") || $("app").hidden) return;
+  document.title = "3D Prints";
+  $("ttl").textContent = plain(t("h_" + ui.tab));
+  const add = $("addBtn");
+  add.hidden = !(ui.tab === "queue" || ui.tab === "backlog" || ui.tab === "spools");
+  add.innerHTML = ic("plus"); add.setAttribute("aria-label", t(ui.tab === "spools" ? "add_spool" : "add_model"));
+  const sb = $("setBtn");
+  sb.innerHTML = ic(ui.tab === "settings" ? "x" : "gear"); sb.setAttribute("aria-label", t(ui.tab === "settings" ? "close" : "tab_settings"));
+  $("demoBar").innerHTML = demo ? '<div class="demo-bar"><span>' + esc(t("demo_on")) + '</span><button data-act="demo-exit">' + esc(t(window.APP_IN_ARTIFACT ? "demo_reset" : "demo_exit")) + '</button></div>' : "";
+  renderCtx(); renderTabs();
+  const v = $("view");
+  const html = ui.tab === "backlog" ? viewBacklog() : ui.tab === "spools" ? viewSpools() : ui.tab === "done" ? viewDone() : ui.tab === "settings" ? viewSettings() : viewQueue();
+  v.innerHTML = '<div class="' + (animate ? "view" : "") + '">' + html + '</div>';
+}
+function softRender(){
+  const a = document.activeElement, keep = a && a.id === "q", pos = keep ? a.selectionStart : 0;
+  render(false);
+  if (keep){ const n = $("q"); if (n){ n.focus(); try { n.setSelectionRange(pos, pos); } catch(e) {} } }
+}
+
+function emptyBlock(tk, pk){
+  return '<div class="empty"><h3>' + esc(plain(t(tk))) + '</h3><p>' + esc(t(pk)) + '</p></div>';
+}
+const searchBox = ph => '<div class="search">' + ic("search") + '<input id="q" type="search" value="' + esc(ui.q) + '" placeholder="' + esc(ph) + '" aria-label="' + esc(ph) + '" autocomplete="off" enterkeyhint="search"></div>';
+const noMatch = () => '<div class="empty"><p>' + esc(t("e_search")) + '</p><button class="btn sec" data-act="clear">' + esc(t("clear")) + '</button></div>';
+
+function thumbHtml(m, blk){
+  const img = safeUrl(m.image) || (String(m.image || "").startsWith("data:image/") ? m.image : "");
+  if (img) return '<span class="thumb' + (blk ? " blk" : "") + '"><img src="' + esc(img) + '" alt="" loading="lazy" onerror="this.remove()"></span>';
+  const hx = (m.uses || []).map(u => fil(u.fid)).filter(Boolean).slice(0, 3).map(f => f.hex);
+  if (hx.length) return '<span class="thumb' + (blk ? " blk" : "") + '" aria-hidden="true"><span class="swatch">' +
+    hx.map(h => '<span style="background:' + esc(h) + (isLight(h) ? ';box-shadow:inset 0 0 0 1px var(--white-ring)' : "") + '"></span>').join("") + '</span></span>';
+  return '<span class="thumb empty" aria-hidden="true">' + (safeUrl(m.link) ? ic("link") : "") + '</span>';
+}
+function modelRow(m, kind){
+  const c = costOf(m), sh = kind === "done" ? [] : shortages(m), blk = sh.length > 0;
+  const incomplete = kind === "backlog" && !!missingText(m);
+  let desc;
+  if (kind === "done") desc = esc((m.doneAt ? fmtDate(m.doneAt) + ", " : "") + fmtTime(m.minutes));
+  else if (blk){
+    const s = sh[0];
+    desc = '<span class="warn"><span class="pdot" aria-hidden="true"></span>' + esc(s.missing ? t("missing_spool") : t("short_of", { g:g0(s.lack), c:fname(s.f) })) + '</span>';
+  }
+  else if (incomplete) desc = esc(missingText(m));
+  else desc = esc([filNames(m), c.grams ? money(c.total) : ""].filter(Boolean).join(", "));
+  const right = kind === "done" ? '<span class="cost">' + esc(money(c.total)) + '</span>'
+    : incomplete ? '<span class="pill-sm">' + esc(t("fill_in")) + '</span>' : timeHtml(m.minutes);
+  return '<li><button class="row-m" data-act="edit-model" data-id="' + esc(m.id) + '">' + thumbHtml(m, blk) +
+    '<span class="mid"><span class="nm">' + esc(m.name) + '</span><span class="ds">' + desc + '</span></span>' + right + '</button></li>';
+}
+
+function viewQueue(){ return viewList("queue"); }
+function viewBacklog(){ return viewList("backlog"); }
+function viewList(which){
+  const all = which === "queue" ? queued() : S.models.filter(m => !m.done && m.list === "backlog").sort((a, b) => (b.created || 0) - (a.created || 0));
+  if (!all.length) return which === "queue" ? emptyBlock("e_queue_t", "e_queue_p") : emptyBlock("e_backlog_t", "e_backlog_p");
+  const q = ui.q.trim().toLowerCase();
+  const list = all.filter(m => !q || (m.name + " " + m.description).toLowerCase().includes(q));
+  const head = all.length > 6 || ui.q ? searchBox(t("search_models")) : "";
+  const body = list.length ? '<ol class="rows">' + list.map(m => modelRow(m, which)).join("") + '</ol>' : noMatch();
+  return head + body + (which === "queue" ? timeButton() : "");
+}
+function timeButton(){
+  const ticks = [];
+  for (let i = 0; i < 21; i++){ const x = 2 + i * 8, major = i % 4 === 0; ticks.push("M" + x + " " + (major ? 6 : 10) + "v" + (major ? 12 : 4)); }
+  return '<button class="timebtn" data-act="time"><span>' + esc(t("tb_ask")) + '</span>' +
+    '<svg class="ticks" viewBox="0 0 170 24" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><path d="' + ticks.join("") + '" stroke="#6F716F" stroke-width="1.5"/><path d="M82 2v20" stroke="#E0331B" stroke-width="2"/></svg>' +
+    '<span class="go">' + ic("chev") + '</span></button>';
+}
+
+function viewSpools(){
+  if (!S.filaments.length) return emptyBlock("e_spools_t", "e_spools_p");
+  const mats = MATERIALS.filter(x => S.filaments.some(f => f.material === x));
+  const q = ui.q.trim().toLowerCase();
+  const need = {}, who = {};
+  S.models.filter(m => !m.done).forEach(m => (m.uses || []).forEach(u => {
+    need[u.fid] = (need[u.fid] || 0) + (+u.grams || 0);
+    if ((+u.grams || 0) > 0) (who[u.fid] = who[u.fid] || []).push(m.name);
+  }));
+  const lackOf = f => Math.max(0, (need[f.id] || 0) - Math.max(0, +f.grams || 0));
+  const list = S.filaments.filter(f => (!ui.mat || f.material === ui.mat) && (!q || (filName(f) + " " + f.notes).toLowerCase().includes(q)))
+    .sort((a, b) => ((lackOf(b) > 0) - (lackOf(a) > 0)) || (MATERIALS.indexOf(a.material) - MATERIALS.indexOf(b.material)) || a.color.localeCompare(b.color));
+  const head = (S.filaments.length > 5 || ui.q ? searchBox(t("search_spools")) : "") +
+    (mats.length > 1 ? '<div class="chips" role="group" aria-label="' + esc(t("material")) + '"><button class="chip" data-mat="" aria-pressed="' + (!ui.mat) + '">' + esc(t("all")) + '</button>' +
+      mats.map(x => '<button class="chip" data-mat="' + esc(x) + '" aria-pressed="' + (ui.mat === x) + '">' + esc(x) + '</button>').join("") + '</div>' : "");
+  if (!list.length) return head + noMatch();
+  return head + '<ul class="rows">' + list.map(f => {
+    const cap = Math.max(1, +f.capacity || 1000), g = Math.max(0, +f.grams || 0), lack = lackOf(f);
+    const low = !lack && g / cap < .15;
+    return '<li><button class="row-s" data-act="edit-spool" data-id="' + esc(f.id) + '">' +
+      '<span class="disc' + (isLight(f.hex) ? " light-ring" : "") + '" style="' + discStyle(f.hex, lack > 0) + '" aria-hidden="true"></span>' +
+      '<span class="mid"><span class="nm">' + esc(fname(f)) + '</span><span class="ds">' + esc([[f.material, f.brand].filter(Boolean).join(", "), t("per_kg", { p:money(f.pricePerKg) })].filter(Boolean).join(", ") + (low ? ", " + t("low") : "")) + '</span></span>' +
+      '<span class="big">' + g0(g) + '<i>g</i></span></button>' +
+      (lack ? '<p class="warn-line"><span class="pdot" aria-hidden="true"></span><span>' + esc(t("spool_short", { g:g0(lack), m:[...new Set(who[f.id] || [])].join(", ") })) + '</span></p>' : "") +
+      '</li>';
+  }).join("") + '</ul>';
+}
+
+function viewDone(){
+  const done = S.models.filter(m => m.done).sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
+  if (!done.length) return emptyBlock("e_done_t", "e_done_p");
+  const yr = new Date().getFullYear();
+  const fM = new Intl.DateTimeFormat(lang, { month:"long" }), fMY = new Intl.DateTimeFormat(lang, { month:"long", year:"numeric" });
+  const groups = [];
+  done.forEach(m => {
+    const k = m.doneAt ? (new Date(m.doneAt).getFullYear() === yr ? fM : fMY).format(m.doneAt) : "—";
+    let g = groups[groups.length - 1];
+    if (!g || g.k !== k){ g = { k, items:[] }; groups.push(g); }
+    g.items.push(m);
+  });
+  return groups.map(g => '<section><h2 class="month">' + esc(g.k.charAt(0).toUpperCase() + g.k.slice(1)) + '</h2>' +
+    '<ul class="rows">' + g.items.map(m => modelRow(m, "done")).join("") + '</ul></section>').join("");
+}
+
+let TP = null, tpTimer = null;
+const nowMin = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); };
+const clampT = x => Math.max(30, Math.min(720, x));
+function openTime(){
+  TP = { m:180, mode:"dur", phase:"set", sel:0, raw:null, drag:null };
+  document.body.style.overflow = "hidden";
+  renderTime();
+}
+function closeTime(){ clearTimeout(tpTimer); TP = null; $("timeRoot").innerHTML = ""; if (!$("sheetRoot").innerHTML) document.body.style.overflow = ""; }
+function combosFor(m){
+  const items = queued().filter(x => (+x.minutes || 0) > 0 && !blocked(x)).slice(0, 14);
+  const n = items.length, res = [];
+  for (let mask = 1; mask < (1 << n); mask++){
+    let s = 0; const l = [];
+    for (let i = 0; i < n; i++) if (mask & (1 << i)){ s += +items[i].minutes; l.push(items[i]); }
+    if (s <= m) res.push({ list:l, sum:s });
+  }
+  res.sort((a, b) => b.sum - a.sum || a.list.length - b.list.length);
+  return res.slice(0, 3);
+}
+function rulerLab(x){
+  const h = Math.floor(x / 60), r = x % 60;
+  if (!h) return r + " min";
+  return r ? h + " h " + r : h + " h";
+}
+function tpChips(){
+  const now = nowMin();
+  if (TP.mode === "dur") return [60, 120, 180, 480].map(v => ({ v, l:fmtTime(v) }));
+  const out = []; let tt = Math.ceil((now + 60) / 120) * 120;
+  while (out.length < 4 && tt - now <= 720){ out.push({ v:tt - now, l:clock(tt) }); tt += 120; }
+  return out;
+}
+const ico = d => '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">' + d + '</svg>';
+function renderTime(){
+  const root = $("timeRoot");
+  if (!TP){ root.innerHTML = ""; return; }
+  const now = nowMin(), m = TP.m, res = TP.phase === "result", calc = TP.phase === "calc";
+  let h = '<div class="tp" role="dialog" aria-modal="true" aria-label="' + esc(t("tb_ask")) + '"><div class="tp-in">' +
+    '<header class="hd"><h1 class="ttl"><span>' + esc(t("tb_ask")) + '</span><span class="ttl2">' + esc(res ? t("tp_have", { time:fmtTime(m), end:clock(now + m) }) : t("tp_sub")) + '</span></h1>' +
+    '<button class="hbtn ghost" data-act="tp-close" aria-label="' + esc(t("close")) + '">' + ic("x") + '</button></header>';
+  if (!res) h += '<div class="pills2" role="group" aria-label="' + esc(t("tb_ask")) + '">' +
+    '<button class="pill" data-act="tp-mode" data-v="dur" aria-pressed="' + (TP.mode === "dur") + '"' + (calc ? " disabled" : "") + '>' + esc(t("tp_dur")) + '</button>' +
+    '<button class="pill" data-act="tp-mode" data-v="end" aria-pressed="' + (TP.mode === "end") + '"' + (calc ? " disabled" : "") + '>' + esc(t("tp_end")) + '</button></div>';
+  const compact = TP.mode === "dur" ? pad2(Math.floor(m / 60)) + ":" + pad2(m % 60) : clock(now + m);
+  const spoken = t("tp_sr", { time:fmtTime(m), end:clock(now + m) });
+  h += '<div class="field' + (res ? " small" : "") + (calc ? " calc" : "") + '" aria-live="polite">' +
+    (calc ? '<span class="scan" aria-hidden="true"></span>' : "") +
+    (res ? '<button class="field-btn" data-act="tp-back" aria-label="' + esc(t("tp_change_sr", { s:spoken })) + '"><span class="dot-num">' + esc(compact) + '</span><span class="pill-sm">' + esc(t("tp_change")) + '</span></button>'
+      : TP.mode === "dur"
+        ? '<div class="digits" aria-hidden="true"><div><span class="dot-num" id="tp-hh"></span><i>h</i></div><div><span class="dot-num grey" id="tp-mm"></span><i>min</i></div></div>'
+        : '<div class="digits" aria-hidden="true"><i class="do">' + "until" + '</i><span class="dot-num" id="tp-end"></span></div>') +
+    '<span class="sr" id="tp-sr">' + esc(spoken) + '</span></div>';
+  if (!res){
+    h += '<p class="conv" id="tp-conv"></p>' +
+      '<div class="dial"><button class="rbtn" data-act="tp-dec" id="tp-dec" aria-label="' + esc(t("tp_less")) + '">' + ico('<path d="M5 12h14"/>') + '</button>' +
+      '<div class="ruler" id="ruler" aria-hidden="true"><span class="tk t1"></span><span class="tk t2"></span><span class="tk b1"></span><span class="tk b2"></span><span class="mark"></span>' +
+      '<span class="rl" id="tp-prev"></span><span class="rl cur" id="tp-cur"></span><span class="rl" id="tp-next"></span></div>' +
+      '<button class="rbtn" data-act="tp-inc" id="tp-inc" aria-label="' + esc(t("tp_more")) + '">' + ic("plus") + '</button></div>' +
+      '<div class="chips4" id="tp-chips" role="group"></div></div>' +
+      '<div class="tp-cta"><button class="btn wide arrow" data-act="tp-show"' + (calc ? " disabled" : "") + '>' + esc(t(calc ? "tp_calc" : "tp_show")) +
+      '<span class="go">' + ico('<path d="M5 12h14M13 6l6 6-6 6"/>') + '</span></button></div>';
+  } else {
+    h += resultHtml(now, m) + '</div>';
+    const combos = combosFor(m), ch = combos[Math.min(TP.sel, Math.max(0, combos.length - 1))];
+    if (ch) h += '<div class="tp-cta"><button class="btn wide arrow rise" style="animation-delay:240ms" data-act="tp-print">' +
+      esc(ch.list.length > 1 ? t("tp_printN", { n:t("models", { n:ch.list.length }) }) : t("tp_print1", { n:ch.list[0].name })) +
+      '<span class="go">' + ico('<path d="M8 5.5l11 6.5-11 6.5z" fill="currentColor" stroke="none"/>') + '</span></button></div>';
+  }
+  root.innerHTML = h + '</div>';
+  if (!res){ updateDial(); bindRuler(); }
+}
+function resultHtml(now, m){
+  const combos = combosFor(m), sel = Math.min(TP.sel, Math.max(0, combos.length - 1)), ch = combos[sel];
+  const q = queued();
+  let h = '<div class="res">';
+  if (ch){
+    const left = m - ch.sum;
+    const cols = ch.list.map(x => (+x.minutes) + "fr").concat(left > 0 ? [left + "fr"] : []).join(" ");
+    const segs = ch.list.map((x, i) => '<span' + (ch.list.length === 1 && !left ? ' class="solo"' : "") + (i === ch.list.length - 1 && !left && ch.list.length > 1 ? ' style="border-radius:6px 14px 14px 6px"' : "") + '></span>').join("") + (left > 0 ? '<span class="spare"></span>' : "");
+    const label = ch.list.map(x => x.name + " " + fmtTime(x.minutes)).join(", ") + (left > 0 ? ", " + t("tp_spare_t", { t:fmtTime(left) }) : "");
+    h += '<div class="card rise"><div class="sum"><div><span class="lb">' + esc(t("tp_ready")) + '</span><span class="v1">' + esc(clock(now + ch.sum)) + '</span></div>' +
+      '<div><span class="lb">' + esc(t("tp_spare")) + '</span>' + (left ? timeHtml(left) : '<span class="tm">0<i>min</i></span>') + '</div></div>' +
+      '<div class="bar" role="img" aria-label="' + esc(label) + '"><div class="g" style="grid-template-columns:' + cols + '">' + segs + '</div><span class="end" aria-hidden="true"></span></div>' +
+      '<div class="bar-l"><span>' + esc(t("tp_now", { t:clock(now) })) + '</span><span>' + esc(t("tp_limit", { t:clock(now + m) })) + '</span></div></div>';
+    h += '<div class="opt-h rise" style="animation-delay:60ms"><h2>' + esc(t("tp_what")) + '</h2><small>' + esc(t("tp_fits", { t:fmtTime(m) })) + '</small></div>';
+    h += combos.map((c, i) => {
+      const rest = m - c.sum;
+      const title = c.list.length > 1 ? c.list.map(x => x.name).join(" + ") : c.list[0].name;
+      const desc = fmtTime(c.sum) + (c.list.length > 1 ? ", " + t("tp_inorder") : "") + ", " + (rest ? t("tp_spare_t", { t:fmtTime(rest) }) : t("tp_nospare")) + (i === 0 ? ", " + t("tp_best") : "");
+      return '<button class="opt rise" style="animation-delay:' + (100 + i * 70) + 'ms" data-act="tp-sel" data-i="' + i + '" aria-pressed="' + (i === sel) + '">' +
+        '<span class="thumbs">' + c.list.slice(0, 3).map(x => thumbHtml(x)).join("") + '</span>' +
+        '<span class="mid"><span class="nm">' + esc(title) + '</span><span class="ds">' + esc(desc) + '</span></span>' +
+        '<span class="rd" aria-hidden="true">' + ic("check") + '</span></button>';
+    }).join("");
+  } else {
+    const timed = q.filter(x => (+x.minutes || 0) > 0 && !blocked(x));
+    const shortest = timed.length ? Math.min(...timed.map(x => +x.minutes)) : 0;
+    h += '<div class="card rise"><span class="nm" style="font-size:18px;white-space:normal">' + esc(t("tp_none")) + '</span><span class="ds">' +
+      esc(shortest ? t("tp_none_p", { t:fmtTime(shortest) }) : t("tp_none_empty")) + '</span></div>';
+  }
+  const blk = q.filter(x => blocked(x) && (+x.minutes || 0) > 0 && +x.minutes <= m);
+  blk.forEach(x => { h += '<p class="tnote rise" style="animation-delay:300ms"><span class="pdot" aria-hidden="true"></span><span>' + esc(t("tp_blocked", { n:x.name })) + '</span></p>'; });
+  const miss = q.filter(x => (+x.minutes || 0) > m).map(x => x.name + ", " + fmtTime(x.minutes));
+  if (miss.length) h += '<p class="tnote muted rise" style="animation-delay:300ms">' + esc(t("tp_miss", { n:miss.join("; ") })) + '</p>';
+  const noT = q.filter(x => !(+x.minutes)).map(x => x.name);
+  if (noT.length) h += '<p class="tnote muted rise" style="animation-delay:300ms">' + esc(t("tp_notime", { n:noT.join(", ") })) + '</p>';
+  return h + '</div>';
+}
+function setText(id, v){ const e = $(id); if (e) e.textContent = v; }
+function updateDial(){
+  if (!TP || TP.phase === "result") return;
+  const now = nowMin(), m = TP.m, raw = TP.raw == null ? m : TP.raw, dur = TP.mode === "dur";
+  setText("tp-hh", pad2(Math.floor(m / 60))); setText("tp-mm", pad2(m % 60)); setText("tp-end", clock(now + m));
+  setText("tp-sr", t("tp_sr", { time:fmtTime(m), end:clock(now + m) }));
+  setText("tp-conv", dur ? t("tp_conv_dur", { now:clock(now), end:clock(now + m) }) : t("tp_conv_end", { now:clock(now), time:fmtTime(m) }));
+  const lab = x => dur ? rulerLab(x) : clock(now + x);
+  setText("tp-prev", m > 30 ? lab(m - 30) : ""); setText("tp-cur", lab(m)); setText("tp-next", m < 720 ? lab(m + 30) : "");
+  const r = $("ruler");
+  if (r){ const w = r.clientWidth || 220; r.style.setProperty("--shift", (w / 2 - raw / 30 * 28) + "px"); r.classList.toggle("drag", TP.raw != null); }
+  const calc = TP.phase === "calc";
+  const d = $("tp-dec"), i = $("tp-inc"); if (d) d.disabled = m <= 30 || calc; if (i) i.disabled = m >= 720 || calc;
+  const box = $("tp-chips");
+  if (box) box.innerHTML = tpChips().map(c => '<button class="pill" data-act="tp-chip" data-v="' + c.v + '" aria-pressed="' + (c.v === m) + '"' + (calc ? " disabled" : "") + '>' + esc(c.l) + '</button>').join("");
+}
+function bindRuler(){
+  const r = $("ruler"); if (!r) return;
+  r.addEventListener("pointerdown", e => {
+    if (!TP || TP.phase !== "set") return;
+    try { r.setPointerCapture(e.pointerId); } catch(err) {}
+    TP.drag = { x:e.clientX, m:TP.m }; TP.raw = TP.m; updateDial();
+  });
+  r.addEventListener("pointermove", e => {
+    if (!TP || !TP.drag) return;
+    const raw = clampT(TP.drag.m - (e.clientX - TP.drag.x) / 28 * 30);
+    TP.raw = raw; TP.m = clampT(Math.round(raw / 30) * 30); updateDial();
+  });
+  const up = () => { if (!TP || !TP.drag) return; TP.drag = null; TP.raw = null; updateDial(); };
+  r.addEventListener("pointerup", up); r.addEventListener("pointercancel", up);
+}
+function tpShow(){
+  if (!TP) return;
+  clearTimeout(tpTimer);
+  TP.sel = 0;
+  if (reduced()){ TP.phase = "result"; renderTime(); return; }
+  TP.phase = "calc"; renderTime();
+  tpTimer = setTimeout(() => { if (!TP) return; TP.phase = "result"; renderTime(); }, 800);
+}
+async function tpPrint(){
+  if (!TP) return;
+  const combos = combosFor(TP.m), ch = combos[Math.min(TP.sel, Math.max(0, combos.length - 1))];
+  closeTime();
+  if (!ch) return;
+  const ids = ch.list.map(x => x.id), q = queued();
+  const first = q.filter(x => ids.includes(x.id)), all = first.concat(q.filter(x => !ids.includes(x.id)));
+  const changed = [];
+  all.forEach((x, k) => { if (x.order !== k + 1){ x.order = k + 1; changed.push(x); } });
+  if (ui.tab !== "queue"){ ui.tab = "queue"; saveUi(); }
+  render(false);
+  await sync(() => Promise.all(changed.map(x => B.updModel(x.id, { sort_order:x.order }))), t("tp_moved", { n:first.length === 1 ? first[0].name : t("models", { n:first.length }) }));
+}
+
+function viewSettings(){
+  const s = S.settings, perH = (+s.watts || 0) / 1000 * (+s.kwh || 0);
+  const seg = (name, cur, opts) => '<span class="seg">' + opts.map(o => '<button data-' + name + '="' + o[0] + '" aria-pressed="' + (cur === o[0]) + '">' + esc(o[1]) + '</button>').join("") + '</span>';
+  return '<div class="section" style="margin-top:4px">' + esc(t("s_workshop")) + '</div><div class="group">' +
+      '<button class="row" data-act="rename"><span class="lbl">' + esc(S.household ? S.household.name : "—") + '<small>' + esc(t("s_rename")) + '</small></span>' + ic("chev") + '</button>' +
+      '<div class="row"><span class="lbl"><small>' + esc(t("s_code")) + '</small><span class="code">' + esc(S.household ? S.household.code : "") + '</span></span>' +
+        '<button class="x" data-act="copy-code" aria-label="' + esc(t("t_copied")) + '">' + ic("copy") + '</button></div>' +
+      '<div class="row"><span class="lbl"><small>' + esc(t("s_people")) + '</small>' + S.members.map(m => esc(m.email || "—")).join("<br>") + '</span></div>' +
+      '<button class="row" data-act="new-code"><span class="lbl">' + esc(t("s_new_code")) + '</span>' + ic("chev") + '</button>' +
+    '</div><p class="foot">' + esc(t("s_code_foot")) + '</p>' +
+
+    '<div class="section">' + esc(t("s_costs")) + '</div><div class="group">' +
+      '<label class="row"><span class="lbl">' + esc(t("currency")) + '</span><input class="in" style="width:96px;height:40px;text-align:right" id="set-cur" maxlength="4" value="' + esc(s.currency) + '"></label>' +
+      '<label class="row"><span class="lbl">' + esc(t("watts")) + '</span><span class="suf" style="width:120px"><input class="in num" style="height:40px;text-align:right" id="set-w" type="number" inputmode="decimal" min="0" step="5" value="' + esc(s.watts) + '"><span style="top:10px">W</span></span></label>' +
+      '<label class="row"><span class="lbl">' + esc(t("kwh")) + '</span><input class="in num" style="width:120px;height:40px;text-align:right" id="set-k" type="number" inputmode="decimal" min="0" step="0.01" value="' + esc(s.kwh) + '"></label>' +
+    '</div><p class="foot">' + esc(t("s_costs_foot", { p:money(perH) })) + '</p>' +
+
+    '<div class="section">' + esc(t("s_look")) + '</div><div class="group">' +
+      '<div class="row"><span class="lbl">' + esc(t("theme")) + '</span>' + seg("settheme", theme, [["light", t("th_light")], ["dark", t("th_dark")], ["system", t("th_system")]]) + '</div>' +
+    '</div>' +
+
+    '<div class="section">' + esc(t("s_data")) + '</div><div class="group">' +
+      (window.APP_IN_ARTIFACT ? "" : '<button class="row" data-act="export"><span class="lbl">' + esc(t("export")) + '</span>' + ic("chev") + '</button>') +
+      '<button class="row" data-act="import"><span class="lbl">' + esc(t("import")) + '</span>' + ic("chev") + '</button>' +
+      '<button class="row" data-act="refresh"><span class="lbl">' + esc(t("refresh")) + '</span>' + ic("chev") + '</button>' +
+    '</div><p class="foot">' + esc(t("s_data_foot")) + '</p><input type="file" id="importFile" accept="application/json,.json" hidden>' +
+
+    '<div class="section">' + esc(t("s_account")) + '</div><div class="group">' +
+      '<div class="row"><span class="lbl">' + esc(user ? user.email : "—") + '</span></div>' +
+      '<button class="row" data-act="signout"><span class="lbl">' + esc(t("signout")) + '</span></button>' +
+      '<button class="row danger" data-act="wipe"><span class="lbl">' + esc(t("wipe")) + '</span></button>' +
+    '</div>';
+}
+
+function openSheet(title, body, foot, sub){
+  $("sheetRoot").innerHTML = '<div class="veil" id="veil"><div class="sheet" role="dialog" aria-modal="true" aria-label="' + esc(plain(title)) + '">' +
+    '<div class="sh-hd"><h2>' + esc(plain(title)) + (sub ? '<span>' + esc(sub) + '</span>' : "") + '</h2><button class="hbtn ghost" data-act="close" aria-label="' + esc(t("close")) + '">' + ic("x") + '</button></div>' +
+    '<div class="sh-bd">' + body + '</div>' + (foot ? '<div class="sh-ft">' + foot + '</div>' : "") + '</div></div>';
+  document.body.style.overflow = "hidden";
+}
+function closeSheet(){ $("sheetRoot").innerHTML = ""; D = null; if (!TP) document.body.style.overflow = ""; }
+
+let D = null;
+function recentFils(){
+  const seen = [], push = id => { const f = fil(id); if (f && !seen.includes(f)) seen.push(f); };
+  S.models.slice().sort((a, b) => (b.created || 0) - (a.created || 0)).forEach(m => (m.uses || []).forEach(u => push(u.fid)));
+  S.filaments.slice().sort((a, b) => (b.created || 0) - (a.created || 0)).forEach(f => push(f.id));
+  return seen;
+}
+function modelSheet(m){
+  const isNew = !m;
+  m = m || { id:"", name:"", link:"", image:"", minutes:0, description:"", list:ui.tab === "backlog" ? "backlog" : "queue", uses:[] };
+  D = { id:m.id, isNew, done:!!m.done, uses:(m.uses || []).map(u => ({ fid:u.fid, grams:+u.grams || 0 })), multi:(m.uses || []).length > 1, showAll:false, fq:"", file:null };
+  if (isNew && !D.uses.length && S.filaments.length) D.uses = [{ fid:recentFils()[0].id, grams:0 }];
+  const h = Math.floor((+m.minutes || 0) / 60), mm = (+m.minutes || 0) % 60;
+  const grams = D.uses.reduce((a, u) => a + (+u.grams || 0), 0);
+  const qIdx = !isNew && !m.done && m.list === "queue" ? queued().findIndex(x => x.id === m.id) : -1;
+  const body =
+    '<div id="imp">' + impZone() + '</div><input type="file" id="slicerFile" accept=".3mf,.gcode,.gco,.g" hidden>' +
+    '<div class="or-line" aria-hidden="true"><span></span>' + esc(t("or_manual")) + '<span></span></div>' +
+    '<div class="tile"><label for="f-name">' + esc(t("name")) + '</label><input class="bare" id="f-name" value="' + esc(m.name) + '" placeholder="' + esc(t("f_name_ph")) + '" autocomplete="off"></div>' +
+    '<div class="tile"><label for="f-link">' + esc(t("f_link")) + '</label><input class="bare" id="f-link" type="url" inputmode="url" value="' + esc(m.link) + '" placeholder="' + esc(t("f_link_ph")) + '"></div>' +
+    '<div class="tile"><div class="tile-hd"><label for="f-h">' + esc(t("f_time")) + '</label><small>' + esc(t("f_time_hint")) + '</small></div>' +
+      '<div class="bignum"><input id="f-h" type="text" inputmode="numeric" maxlength="2" aria-label="' + esc(t("hours")) + '" value="' + (h || "") + '" placeholder="0"><b>h</b>' +
+      '<input id="f-m" type="text" inputmode="numeric" maxlength="2" aria-label="' + esc(t("minutes")) + '" value="' + (mm ? mm : "") + '" placeholder="00"><b>min</b></div></div>' +
+    '<div class="two"><div class="tile"><label for="f-g">' + esc(t("f_weight")) + '</label><div class="bignum"><input class="w" id="f-g" type="text" inputmode="numeric" maxlength="5" value="' + (grams ? g0(grams) : "") + '" placeholder="0"><b>g</b></div></div>' +
+      '<div class="tile dark" id="calc"></div></div>' +
+    '<section class="fsec"><div class="tile-hd" style="padding:4px 4px 6px"><h3 class="lb" style="font-size:13px;font-weight:500;color:var(--muted)">' + esc(t("filament")) + '</h3><small>' + esc(t("f_recent")) + '</small></div><div id="filpick"></div></section>' +
+    '<div class="tile"><span class="lb">' + esc(t("f_photo")) + '</span><div class="photo"><span id="f-prev">' + thumbHtml(m) + '</span>' +
+      '<button class="btn sec" style="flex:1;height:48px" data-act="pick-photo">' + ic("photo") + esc(t("upload")) + '</button></div>' +
+      '<input class="in" id="f-img" type="url" style="background:var(--thumb)" value="' + esc(String(m.image || "").startsWith("data:") ? "" : m.image) + '" placeholder="' + esc(t("img_ph")) + '" aria-label="' + esc(t("img_ph")) + '"><input type="file" id="photoFile" accept="image/*" hidden></div>' +
+    '<div class="tile"><label for="f-desc">' + esc(t("notes")) + '</label><textarea class="bare" id="f-desc" placeholder="' + esc(t("notes_ph")) + '">' + esc(m.description) + '</textarea></div>' +
+    (!isNew && !m.done ? '<span class="fl">' + esc(t("where")) + '</span><div class="pills2" id="f-list" data-v="' + (m.list === "queue" ? "queue" : "backlog") + '">' +
+      '<button class="pill" data-seg="queue" aria-pressed="' + (m.list === "queue") + '">' + esc(t("in_queue_l")) + '</button><button class="pill" data-seg="backlog" aria-pressed="' + (m.list !== "queue") + '">' + esc(t("in_backlog_l")) + '</button></div>' : "") +
+    (qIdx >= 0 ? '<span class="fl">' + esc(t("order")) + ', ' + (qIdx + 1) + '/' + queued().length + '</span><div class="order">' +
+      '<button class="chip" data-act="move-top" data-id="' + esc(m.id) + '">' + ic("top") + esc(t("top")) + '</button>' +
+      '<button class="chip" data-act="move-up" data-id="' + esc(m.id) + '">' + ic("up") + esc(t("up")) + '</button>' +
+      '<button class="chip" data-act="move-down" data-id="' + esc(m.id) + '">' + ic("down") + esc(t("down")) + '</button></div>' : "") +
+    (isNew ? "" : '<button class="btn danger" style="align-self:flex-start" data-act="del-model" data-id="' + esc(m.id) + '">' + esc(t("delete")) + '</button>');
+  const goIc = '<span class="go">' + '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>';
+  const foot = isNew
+    ? '<div class="btn-col"><p class="note" id="f-note"></p><button class="btn sec wide" id="b-later" data-act="save-later">' + esc(t("save_later")) + '</button>' +
+      '<button class="btn wide arrow" id="b-queue" data-act="save-queue">' + esc(t("add_queue")) + goIc + '</button></div>'
+    : '<div class="btn-col">' + (m.done
+        ? '<button class="btn sec wide" data-act="undone" data-id="' + esc(m.id) + '">' + esc(t("undo_print")) + '</button>'
+        : '<button class="btn sec wide" data-act="done" data-id="' + esc(m.id) + '">' + esc(t("mark_done")) + '</button>') +
+      '<button class="btn wide arrow" data-act="save-model" data-id="' + esc(m.id) + '">' + esc(t("save_changes")) + goIc + '</button></div>';
+  openSheet(t(isNew ? "new_model" : "edit_model"), body, foot, isNew ? t("sub_new") : m.name);
+  renderFilPick(); recalc();
+  if (isNew) setTimeout(() => { const n = $("f-name"); if (n && !D.file) n.focus(); }, 300);
+}
+function impZone(){
+  if (D && D.file){
+    return '<div class="imp-ok"><span id="imp-thumb">' + (D.file.img ? '<span class="thumb"><img src="' + esc(D.file.img) + '" alt=""></span>' : '<span class="thumb empty"></span>') + '</span>' +
+      '<span class="tx"><b>' + esc(D.file.name) + '</b><span>' + esc(D.file.msg) + '</span></span>' +
+      '<button class="linkbtn" data-act="pick-slicer">' + esc(t("imp_change")) + '</button></div>';
+  }
+  return '<button class="imp" data-act="pick-slicer"><span class="up">' + '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>' + '</span>' +
+    '<span class="tx"><b>' + esc(t("imp_t")) + '</b><span>' + esc(t("imp_p")) + '</span></span></button>';
+}
+function draftNeed(fid){ return D ? D.uses.filter(u => u.fid === fid).reduce((a, u) => a + (+u.grams || 0), 0) : 0; }
+function filDisc(f){
+  const sel = D.uses.some(u => u.fid === f.id), short = draftNeed(f.id) > (+f.grams || 0);
+  return '<button class="fdisc" data-act="fil-toggle" data-id="' + esc(f.id) + '" aria-pressed="' + sel + '" aria-label="' + esc(fname(f) + ", " + f.material + (short ? ", " + t("fil_low") : "")) + '">' +
+    '<span class="d' + (isLight(f.hex) ? " light-ring" : "") + '" style="' + discStyle(f.hex, short) + '"></span>' +
+    '<span class="t"><b>' + esc(fname(f)) + '</b><span>' + esc(f.material) + '</span>' + (short ? '<span class="lo">' + esc(t("fil_low")) + '</span>' : "") + '</span></button>';
+}
+function renderFilPick(){
+  const box = $("filpick"); if (!box || !D) return;
+  if (!S.filaments.length){ box.innerHTML = '<p class="note">' + esc(t("e_spools_p")) + '</p>'; return; }
+  const rec = recentFils();
+  const top = D.uses.map(u => fil(u.fid)).filter(Boolean);
+  rec.forEach(f => { if (top.length < 4 && !top.includes(f)) top.push(f); });
+  const shown = top.slice(0, Math.max(4, top.length));
+  const more = S.filaments.length - shown.length;
+  let h = '<div class="fgrid">' + shown.map(filDisc).join("") +
+    (more > 0 ? '<button class="fdisc" data-act="fil-all" aria-expanded="' + D.showAll + '"><span class="d more">+' + more + '</span><span class="t"><b>' + esc(t("f_all")) + '</b><span>' + esc(t("spools", { n:S.filaments.length })) + '</span></span></button>' : "") + '</div>';
+  if (D.showAll){
+    const q = D.fq.trim().toLowerCase();
+    const list = S.filaments.filter(f => !q || filName(f).toLowerCase().includes(q)).sort((a, b) => fname(a).localeCompare(fname(b)));
+    h += '<div class="search" style="margin:12px 0 8px">' + ic("search") + '<input id="fil-q" type="search" value="' + esc(D.fq) + '" placeholder="' + esc(t("search_fil")) + '" aria-label="' + esc(t("search_fil")) + '" autocomplete="off"></div>' +
+      '<div class="flist" id="fil-list">' + list.map(f => {
+        const sel = D.uses.some(u => u.fid === f.id), short = draftNeed(f.id) > (+f.grams || 0);
+        return '<button class="frow" data-act="fil-toggle" data-id="' + esc(f.id) + '" aria-pressed="' + sel + '"><span class="disc' + (isLight(f.hex) ? " light-ring" : "") + '" style="' + discStyle(f.hex, short) + '" aria-hidden="true"></span>' +
+          '<span class="mid"><span class="nm">' + esc(fname(f)) + '</span><span class="ds">' + (short ? '<span class="warn"><span class="pdot" aria-hidden="true"></span>' + esc(t("fil_low")) + '</span>' : esc([f.material, f.brand].filter(Boolean).join(", "))) + '</span></span>' +
+          '<span class="g">' + g0(f.grams) + ' g</span></button>';
+      }).join("") + '</div>';
+  }
+  if (D.multi && D.uses.length > 1){
+    h += '<div class="flist" style="margin-top:12px">' + D.uses.map(u => {
+      const f = fil(u.fid);
+      return '<div class="fg-row"><span class="disc' + (f && isLight(f.hex) ? " light-ring" : "") + '" style="' + discStyle(f ? f.hex : "", false) + '" aria-hidden="true"></span>' +
+        '<span class="mid"><span class="nm">' + esc(f ? fname(f) : t("missing")) + '</span><span class="ds">' + esc(f ? f.material : "") + '</span></span>' +
+        '<input class="fg-in" data-fid="' + esc(u.fid) + '" type="text" inputmode="numeric" maxlength="5" value="' + (u.grams ? g0(u.grams) : "") + '" placeholder="0" aria-label="' + esc((f ? fname(f) : "") + ", g") + '"><b>g</b></div>';
+    }).join("") + '</div>';
+  }
+  h += '<button class="textbtn" data-act="fil-multi">' + esc(t(D.multi ? "f_single" : "f_multi")) + '</button>';
+  box.innerHTML = h;
+  const g = $("f-g");
+  if (g){
+    const many = D.uses.length > 1, none = !D.uses.length;
+    g.readOnly = many || none;
+    if (many) g.value = g0(D.uses.reduce((a, u) => a + (+u.grams || 0), 0)) ;
+    g.setAttribute("aria-describedby", none ? "f-g-note" : "");
+  }
+}
+function toggleFil(id){
+  if (!D) return;
+  const i = D.uses.findIndex(u => u.fid === id);
+  if (D.multi){
+    if (i >= 0) D.uses.splice(i, 1); else D.uses.push({ fid:id, grams:0 });
+  } else {
+    const grams = D.uses.reduce((a, u) => a + (+u.grams || 0), 0);
+    D.uses = [{ fid:id, grams }];
+  }
+  renderFilPick(); recalc();
+}
+const digitsOnly = (el, max) => { const v = el.value.replace(/\D/g, "").slice(0, max); if (v !== el.value) el.value = v; return +v || 0; };
+function draftMinutes(){ return (+(($("f-h") || {}).value || 0)) * 60 + Math.min(59, +(($("f-m") || {}).value || 0)); }
+function recalc(){
+  const box = $("calc"); if (!box) return;
+  const c = costOf({ minutes:draftMinutes(), uses:D ? D.uses : [] });
+  box.innerHTML = '<span class="lb">' + esc(t("cost")) + '</span><span class="v">' + (c.grams ? esc(money(c.total)) : "–") + '</span>';
+  const g = $("f-g"); if (g && D && D.uses.length > 1) g.value = c.grams ? g0(c.grams) : "";
+  updateFoot();
+}
+function updateFoot(){
+  if (!D || !D.isNew) return;
+  const name = (($("f-name") || {}).value || "").trim(), minutes = draftMinutes(), grams = D.uses.reduce((a, u) => a + (+u.grams || 0), 0);
+  const okQ = !!(name && minutes && grams);
+  const n = $("f-note"); if (n) n.textContent = !name ? t("note_name") : !D.uses.length ? t("f_pick_first") : !okQ ? t("note_data") : t("note_ok");
+  const bl = $("b-later"), bq = $("b-queue");
+  if (bl) bl.disabled = !name; if (bq) bq.disabled = !okQ;
+}
+
+async function unzipEntries(buf, want){
+  const dv = new DataView(buf), dec = new TextDecoder(); let eocd = -1;
+  for (let i = buf.byteLength - 22; i >= Math.max(0, buf.byteLength - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50){ eocd = i; break; }
+  if (eocd < 0) throw new Error("zip");
+  const cnt = dv.getUint16(eocd + 10, true); let off = dv.getUint32(eocd + 16, true);
+  const out = {};
+  for (let k = 0; k < cnt; k++){
+    if (dv.getUint32(off, true) !== 0x02014b50) break;
+    const method = dv.getUint16(off + 10, true), csize = dv.getUint32(off + 20, true);
+    const nlen = dv.getUint16(off + 28, true), elen = dv.getUint16(off + 30, true), clen = dv.getUint16(off + 32, true), loff = dv.getUint32(off + 42, true);
+    const nm = dec.decode(new Uint8Array(buf, off + 46, nlen));
+    off += 46 + nlen + elen + clen;
+    if (!want(nm)) continue;
+    const ln = dv.getUint16(loff + 26, true), le = dv.getUint16(loff + 28, true);
+    const data = new Uint8Array(buf, loff + 30 + ln + le, csize);
+    if (method === 0) out[nm] = data;
+    else if (method === 8 && typeof DecompressionStream !== "undefined")
+      out[nm] = new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+  }
+  return out;
+}
+function durToMin(s){ let d = 0, x; const r = /(\d+(?:\.\d+)?)\s*([dhms])/gi; while ((x = r.exec(s))) d += +x[1] * ({ d:1440, h:60, m:1, s:1 / 60 }[x[2].toLowerCase()]); return Math.round(d); }
+function parseGcode(tx){
+  const info = { minutes:0, uses:[] };
+  const tm = tx.match(/;\s*(?:model printing time|estimated printing time \(normal mode\)|total estimated time)\s*[:=]\s*([^;\n]+)/i);
+  if (tm) info.minutes = durToMin(tm[1]);
+  else { const c = tx.match(/;TIME:(\d+)/); if (c) info.minutes = Math.round(+c[1] / 60); }
+  const gl = tx.match(/;\s*(?:total filament weight \[g\]|filament used \[g\])\s*[:=]\s*([\d.,\s]+)/i);
+  const grams = gl ? gl[1].split(/[,\s]+/).map(Number).filter(x => x > 0) : [];
+  const cl = tx.match(/;\s*(?:filament_colour|filament_color|extruder_colour)\s*=\s*([^\n]+)/i);
+  const cols = cl ? cl[1].split(/[;,]/).map(s => s.trim()).filter(Boolean) : [];
+  const ty = tx.match(/;\s*filament_type\s*=\s*([^\n]+)/i);
+  const types = ty ? ty[1].split(/[;,]/).map(s => s.trim()) : [];
+  grams.forEach((g, i) => info.uses.push({ grams:Math.round(g), color:cols[i] || "", type:types[i] || "" }));
+  return info;
+}
+async function parse3mf(file){
+  const buf = await file.arrayBuffer(), dec = new TextDecoder();
+  const e = await unzipEntries(buf, n => /^Metadata\/(slice_info\.config|plate_1\.png|plate_1\.gcode)$/i.test(n));
+  const info = { minutes:0, uses:[], png:null };
+  const si = e["Metadata/slice_info.config"];
+  if (si){
+    const doc = new DOMParser().parseFromString(dec.decode(si), "text/xml"), plate = doc.querySelector("plate");
+    if (plate){
+      const meta = k => { const n = [...plate.querySelectorAll("metadata")].find(x => x.getAttribute("key") === k); return n ? n.getAttribute("value") : null; };
+      const pr = +meta("prediction"); if (pr) info.minutes = Math.round(pr / 60);
+      plate.querySelectorAll("filament").forEach(f => { const g = +f.getAttribute("used_g") || 0; if (g > 0) info.uses.push({ color:f.getAttribute("color") || "", type:f.getAttribute("type") || "", grams:Math.round(g) }); });
+      if (!info.uses.length){ const w = +meta("weight"); if (w) info.uses.push({ color:"", type:"", grams:Math.round(w) }); }
+    }
+  }
+  const gc = e["Metadata/plate_1.gcode"];
+  if (gc && (!info.minutes || !info.uses.length)){
+    const head = dec.decode(gc.subarray(0, 300000)), tail = dec.decode(gc.subarray(Math.max(0, gc.length - 300000)));
+    const g = parseGcode(head + "\n" + tail);
+    if (!info.minutes) info.minutes = g.minutes; if (!info.uses.length) info.uses = g.uses;
+  }
+  if (e["Metadata/plate_1.png"]) info.png = new File([e["Metadata/plate_1.png"]], "plate-preview.png", { type:"image/png" });
+  return info;
+}
+function hexDist(a, b){
+  const p = h => { h = String(h || "").replace("#", ""); return h.length >= 6 ? [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16)) : null; };
+  const x = p(a), y = p(b); if (!x || !y) return 1e9;
+  return (x[0] - y[0]) ** 2 + (x[1] - y[1]) ** 2 + (x[2] - y[2]) ** 2;
+}
+function matchSpool(color, type){
+  if (!S.filaments.length) return null;
+  const ty = String(type || "").toLowerCase();
+  const pool = ty ? S.filaments.filter(f => f.material.toLowerCase() === ty || f.material.toLowerCase().includes(ty)) : [];
+  const from = pool.length ? pool : S.filaments;
+  if (!color) return pool.length === 1 ? pool[0] : null;
+  let best = null, bd = 1e9; from.forEach(f => { const d = hexDist(f.hex, color); if (d < bd){ bd = d; best = f; } });
+  return bd < 60 * 60 * 3 ? best : null;
+}
+async function importSlicer(file){
+  if (!D || !file) return;
+  $("imp").innerHTML = '<div class="imp-ok"><span class="thumb"><span class="spin on"></span></span><span class="tx"><b>' + esc(file.name) + '</b><span>' + esc(t("imp_reading")) + '</span></span></div>';
+  let info;
+  try {
+    if (/\.3mf$/i.test(file.name)) info = await parse3mf(file);
+    else { const head = await file.slice(0, 400000).text(), tail = await file.slice(Math.max(0, file.size - 400000)).text(); info = parseGcode(head + "\n" + tail); }
+  } catch(e){ console.warn(e); if (D) { D.file = null; $("imp").innerHTML = impZone(); } toast(t("imp_fail")); return; }
+  if (!D) return;
+  const got = [];
+  const nameEl = $("f-name");
+  if (nameEl && !nameEl.value.trim()){
+    const base = file.name.replace(/\.(gcode|gco|g|3mf)$/i, "").replace(/\.gcode$/i, "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+    nameEl.value = base.charAt(0).toUpperCase() + base.slice(1);
+  }
+  if (info.minutes){ $("f-h").value = Math.floor(info.minutes / 60) || ""; $("f-m").value = info.minutes % 60 || ""; got.push(t("w_time")); }
+  let noMatch = false;
+  if (info.uses.length){
+    const map = {};
+    info.uses.forEach(u => { const f = matchSpool(u.color, u.type); if (f) map[f.id] = (map[f.id] || 0) + u.grams; else noMatch = true; });
+    const ids = Object.keys(map);
+    const total = info.uses.reduce((a, u) => a + u.grams, 0);
+    if (ids.length){ D.uses = ids.map(fid => ({ fid, grams:map[fid] })); D.multi = ids.length > 1; got.push(t("w_weight"), t("w_fil")); }
+    else if (D.uses.length === 1){ D.uses[0].grams = total; got.push(t("w_weight")); }
+    if (D.uses.length === 1) $("f-g").value = g0(D.uses[0].grams);
+  }
+  let img = "";
+  if (info.png){ got.push(t("w_img")); await uploadPhoto(info.png); const p = $("f-prev"); img = p && p.dataset.url ? p.dataset.url : ""; }
+  const unsliced = !info.minutes && !info.uses.length;
+  D.file = { name:file.name, img, msg:unsliced ? t("imp_unsliced") : noMatch && !got.includes(t("w_fil")) ? t("imp_nomatch") : t("imp_ok", { what:got.join(", ") }) };
+  $("imp").innerHTML = impZone();
+  renderFilPick(); recalc();
+}
+
+function spoolSheet(f){
+  const isNew = !f;
+  f = f || { id:"", brand:"", material:"PLA", color:"", hex:"#8E9188", pricePerKg:"", grams:1000, capacity:1000, notes:"" };
+  const used = isNew ? 0 : S.models.filter(m => (m.uses || []).some(u => u.fid === f.id)).length;
+  const body =
+    '<div class="two"><div><label class="fl" for="x-brand">' + esc(t("brand")) + '</label><input class="in" id="x-brand" value="' + esc(f.brand) + '" placeholder="' + esc(t("brand_ph")) + '" list="brands"></div>' +
+      '<div><label class="fl" for="x-mat">' + esc(t("material")) + '</label><select class="in" id="x-mat">' + MATERIALS.map(x => '<option' + (x === f.material ? " selected" : "") + '>' + esc(x) + '</option>').join("") + '</select></div></div>' +
+    '<datalist id="brands">' + [...new Set(S.filaments.map(x => x.brand).filter(Boolean))].map(b => '<option value="' + esc(b) + '">').join("") + '</datalist>' +
+    '<label class="fl" for="x-color">' + esc(t("color")) + '</label><div class="hexrow"><input type="color" id="x-hex" value="' + esc(/^#[0-9a-f]{6}$/i.test(f.hex) ? f.hex : "#8E9188") + '" aria-label="' + esc(t("color")) + '"><input class="in" id="x-color" value="' + esc(f.color) + '" placeholder="' + esc(t("color_ph")) + '"></div>' +
+    '<div class="two"><div><label class="fl" for="x-grams">' + esc(t("left")) + '</label><div class="suf"><input class="in num" id="x-grams" type="number" inputmode="decimal" min="0" step="1" value="' + esc(f.grams) + '"><span>g</span></div></div>' +
+      '<div><label class="fl" for="x-cap">' + esc(t("capacity")) + '</label><div class="suf"><input class="in num" id="x-cap" type="number" inputmode="decimal" min="1" step="50" value="' + esc(f.capacity) + '"><span>g</span></div></div></div>' +
+    '<div class="stepper"><button data-step="-100">−100</button><button data-step="-10">−10</button><button data-step="10">+10</button><button data-step="full">' + esc(t("full")) + '</button><button data-step="zero">' + esc(t("empty_sp")) + '</button></div>' +
+    '<label class="fl" for="x-price">' + esc(t("price_kg")) + '</label><div class="suf"><input class="in num" id="x-price" type="number" inputmode="decimal" min="0" step="0.01" value="' + esc(f.pricePerKg) + '" placeholder="0"><span>' + esc((S.settings.currency || "PLN") + "/kg") + '</span></div>' +
+    '<label class="fl" for="x-notes">' + esc(t("notes")) + '</label><textarea class="in" id="x-notes" placeholder="' + esc(t("spool_note_ph")) + '">' + esc(f.notes) + '</textarea>' +
+    (isNew ? "" : '<div style="margin-top:14px"><button class="btn danger" data-act="del-spool" data-id="' + esc(f.id) + '" data-used="' + used + '">' + esc(t("delete")) + '</button></div>');
+  openSheet(t(isNew ? "new_spool" : "edit_spool"), body, '<button class="btn wide" data-act="save-spool" data-id="' + esc(f.id) + '">' + esc(t(isNew ? "add" : "save")) + '</button>');
+}
+
+function confirmSheet(title, msg, label, onYes, word){
+  openSheet(title, '<p style="color:var(--sub);font-size:15px;margin:4px 4px 6px">' + esc(msg) + '</p>' +
+    (word ? '<input class="in" id="cf-word" autocomplete="off" autocapitalize="characters" placeholder="' + esc(word) + '" style="margin-top:10px">' : ""),
+    '<div class="btns"><button class="btn sec" data-act="close">' + esc(t("cancel")) + '</button><button class="btn" id="cf-yes" style="background:var(--danger);color:var(--on-ink)">' + esc(label) + '</button></div>');
+  const yes = $("cf-yes");
+  if (word){ yes.disabled = true; $("cf-word").addEventListener("input", e => { yes.disabled = e.target.value.trim().toUpperCase() !== word; }); }
+  yes.onclick = () => { closeSheet(); onYes(); };
+}
+function promptSheet(title, value, onSave){
+  openSheet(title, '<input class="in" id="pr-val" value="' + esc(value) + '" autocomplete="off">', '<button class="btn wide" id="pr-ok">' + esc(t("save")) + '</button>');
+  $("pr-ok").onclick = () => { const v = $("pr-val").value.trim(); closeSheet(); if (v) onSave(v); };
+  setTimeout(() => { const n = $("pr-val"); if (n) n.focus(); }, 340);
+}
+
+async function saveModel(id, dest){
+  if (!D) return;
+  const name = $("f-name").value.trim();
+  if (!name){ toast(t("t_need_name")); $("f-name").focus(); return; }
+  const listEl = $("f-list");
+  const prevImg = id ? (S.models.find(x => x.id === id) || {}).image : "";
+  const pending = $("f-prev").dataset.url;
+  const typed = $("f-img").value.trim();
+  const image = pending || typed || (String(prevImg || "").startsWith("data:") ? prevImg : "");
+  const uses = D.uses.filter(u => u.fid).map(u => ({ fid:u.fid, grams:Math.max(0, Math.round(+u.grams || 0)) }));
+  const data = { name, link:$("f-link").value.trim(), image, minutes:draftMinutes(), description:$("f-desc").value.trim(), uses };
+  if (!id) data.list = dest === "queue" ? "queue" : "backlog";
+  else if (listEl) data.list = listEl.dataset.v;
+  if (!id && data.list === "queue" && !(data.minutes && costOf(data).grams)){ toast(t("note_data")); return; }
+  closeSheet();
+  if (id){
+    const m = S.models.find(x => x.id === id); if (!m) return;
+    const wasQ = m.list === "queue";
+    Object.assign(m, data);
+    if (m.list === "queue" && !wasQ) m.order = nextOrder();
+    render(false);
+    await sync(() => B.updModel(id, outModel(m)), t("t_saved"));
+  } else {
+    const row = Object.assign({ done:false, deducted:false }, data);
+    row.order = row.list === "queue" ? nextOrder() : 0;
+    const r = await sync(() => B.insModel(row), t(row.list === "queue" ? "t_added_q" : "t_added_b"));
+    if (r) S.models.push(r);
+    render(false);
+  }
+}
+async function saveSpool(id){
+  const brand = $("x-brand").value.trim(), color = $("x-color").value.trim();
+  if (!brand && !color){ toast(t("t_need_spool")); $("x-brand").focus(); return; }
+  const data = { brand, color, material:$("x-mat").value, hex:$("x-hex").value, pricePerKg:+$("x-price").value || 0,
+    grams:Math.max(0, +$("x-grams").value || 0), capacity:Math.max(1, +$("x-cap").value || 1000), notes:$("x-notes").value.trim() };
+  closeSheet();
+  if (id){
+    const f = fil(id); if (!f) return;
+    Object.assign(f, data); render(false);
+    await sync(() => B.updFil(id, outFil(f)), t("t_saved"));
+  } else {
+    const r = await sync(() => B.insFil(data), t("t_spool_added"));
+    if (r) S.filaments.push(r);
+    render(false);
+  }
+}
+function splash(el){
+  if (reduced()) return;
+  const r = el.getBoundingClientRect(), host = el.closest(".card");
+  if (!host) return;
+  const hr = host.getBoundingClientRect();
+  for (let i = 0; i < 9; i++){
+    const d = document.createElement("span"); d.className = "splash";
+    const a = (i / 9) * Math.PI * 2, dist = 22 + Math.random() * 10;
+    d.style.left = (r.left - hr.left + r.width / 2 - 3) + "px"; d.style.top = (r.top - hr.top + r.height / 2 - 3) + "px";
+    d.style.setProperty("--dx", Math.cos(a) * dist + "px"); d.style.setProperty("--dy", Math.sin(a) * dist + "px");
+    host.appendChild(d); setTimeout(() => d.remove(), 600);
+  }
+}
+async function setPrinted(id, done, btn){
+  const m = S.models.find(x => x.id === id); if (!m || m.done === done) return;
+  animating++;
+  let grams = 0;
+  if (btn && !btn.closest(".sheet")){
+    btn.classList.toggle("on", done);
+    if (done) splash(btn);
+    await new Promise(r => setTimeout(r, reduced() ? 0 : 520));
+    const card = btn.closest(".card");
+    if (card && !reduced()){ card.classList.add("gone"); await new Promise(r => setTimeout(r, 330)); }
+  } else closeSheet();
+  (m.uses || []).forEach(u => {
+    const f = fil(u.fid); if (!f) return;
+    if (done && !m.deducted){ f.grams = Math.max(0, f.grams - (+u.grams || 0)); grams += +u.grams || 0; }
+    if (!done && m.deducted) f.grams += +u.grams || 0;
+  });
+  m.done = done; m.deducted = done; m.doneAt = done ? Date.now() : null;
+  if (!done && m.list === "queue") m.order = nextOrder();
+  render(false);
+  animating--;
+  const ok = await sync(async () => { await B.markPrinted(id, done); if (!done && m.list === "queue") await B.updModel(id, { sort_order:m.order }); return true; },
+    done ? (grams ? t("t_deducted", { g:g0(grams) }) : t("t_done")) : t("t_undone"));
+  if (ok) remoteChanged();
+}
+async function moveInQueue(id, how){
+  const q = queued(), i = q.findIndex(m => m.id === id); if (i < 0) return;
+  const [mv] = q.splice(i, 1);
+  const j = how === "top" ? 0 : how === "up" ? Math.max(0, i - 1) : Math.min(q.length, i + 1);
+  q.splice(j, 0, mv);
+  const changed = [];
+  q.forEach((m, k) => { if (m.order !== k + 1){ m.order = k + 1; changed.push(m); } });
+  closeSheet(); render(false);
+  await sync(() => Promise.all(changed.map(m => B.updModel(m.id, { sort_order:m.order }))));
+}
+async function uploadPhoto(file){
+  if (!file) return;
+  if (file.size > 8 * 1024 * 1024){ toast(t("t_photo_big")); return; }
+  const prev = $("f-prev");
+  if (prev) prev.innerHTML = '<span class="thumb"><span class="spin on"></span></span>';
+  const url = await sync(() => B.upload(file));
+  const p = $("f-prev"); if (!p) return;
+  if (url){ p.dataset.url = url; p.innerHTML = thumbHtml({ image:url }); $("f-img").value = url.startsWith("data:") ? "" : url; toast(t("t_photo")); }
+  else { p.innerHTML = thumbHtml({}); toast(t("t_upload_fail")); }
+}
+function exportData(){
+  const blob = new Blob([JSON.stringify({ app:"3d-prints", version:3, exported:new Date().toISOString(), filaments:S.filaments, models:S.models, settings:S.settings }, null, 2)], { type:"application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = "3d-prints-backup-" + new Date().toISOString().slice(0, 10) + ".json"; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+}
+async function importData(file){
+  let d; try { d = JSON.parse(await file.text()); } catch(e){ toast(t("bad_file")); return; }
+  if (!Array.isArray(d.filaments) || !Array.isArray(d.models)){ toast(t("bad_file")); return; }
+  busy(true);
+  try {
+    const map = {};
+    for (const f of d.filaments){ const r = await B.insFil(f); map[f.id] = r.id; }
+    for (const m of d.models){
+      const uses = (m.uses || []).map(u => ({ fid:map[u.fid] || u.fid, grams:+u.grams || 0 }));
+      const r = await B.insModel(Object.assign({}, m, { uses }));
+      if (m.done){ await B.updModel(r.id, { done:true, deducted:true, done_at:m.doneAt ? new Date(m.doneAt).toISOString() : new Date().toISOString() }); }
+    }
+    if (d.settings){ S.settings = { currency:d.settings.currency || S.settings.currency, watts:+d.settings.watts || 0, kwh:+d.settings.kwh || 0 }; await B.saveSettings(S.settings); }
+    toast(t("imported", { f:t("spools", { n:d.filaments.length }), m:t("models", { n:d.models.length }) }));
+  } catch(e){ console.warn(e); toast(e.message || t("t_offline")); }
+  finally { busy(false); await reload(); }
+}
+
+document.addEventListener("click", async e => {
+  const gt = e.target.closest("[data-g]"); if (gt){ e.preventDefault(); await gateAction(gt.dataset.g, gt); return; }
+  const tb = e.target.closest("[data-tab]");
+  if (tb){
+    if (ui.tab !== tb.dataset.tab){ ui.tab = tb.dataset.tab; ui.q = ""; ui.mat = ""; saveUi(); render(); window.scrollTo({ top:0 }); } return; }
+  const mt = e.target.closest("[data-mat]"); if (mt){ ui.mat = mt.dataset.mat; render(false); return; }
+  const th = e.target.closest("[data-settheme]"); if (th){ theme = th.dataset.settheme; lsSet(LS.theme, theme); applyTheme(); render(false); return; }
+  const sg = e.target.closest("[data-seg]"); if (sg){ const box = sg.closest("[data-v]"); box.dataset.v = sg.dataset.seg; box.querySelectorAll("[data-seg]").forEach(b => b.setAttribute("aria-pressed", b === sg)); return; }
+  const st = e.target.closest("[data-step]");
+  if (st){
+    const g = $("x-grams"), cap = +$("x-cap").value || 1000, v = st.dataset.step;
+    g.value = v === "full" ? cap : v === "zero" ? 0 : Math.max(0, Math.round((+g.value || 0) + +v)); return;
+  }
+  if (e.target.id === "addBtn" || e.target.closest("#addBtn")){ ui.tab === "spools" ? spoolSheet(null) : modelSheet(null); return; }
+  if (e.target.id === "veil"){ closeSheet(); return; }
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const act = el.dataset.act, id = el.dataset.id;
+  switch (act){
+    case "close": closeSheet(); break;
+    case "settings":
+      if (ui.tab === "settings"){ ui.tab = ui.prev || "queue"; }
+      else { ui.prev = ui.tab; ui.tab = "settings"; }
+      ui.q = ""; saveUi(); render(); window.scrollTo({ top:0 }); break;
+    case "new-model": modelSheet(null); break;
+    case "edit-model": modelSheet(S.models.find(m => m.id === id)); break;
+    case "save-model": await saveModel(id); break;
+    case "save-later": await saveModel("", "backlog"); break;
+    case "save-queue": await saveModel("", "queue"); break;
+    case "del-model": {
+      const m = S.models.find(x => x.id === id); if (!m) return;
+      confirmSheet(t("del_model_t"), t("del_model_p", { n:m.name }), t("delete"), async () => {
+        S.models = S.models.filter(x => x.id !== id); render(false); await sync(() => B.delModel(id), t("t_deleted"));
+      });
+      break;
+    }
+    case "done": await setPrinted(id, true, el); break;
+    case "undone": await setPrinted(id, false, el); break;
+    case "move-top": await moveInQueue(id, "top"); break;
+    case "move-up": await moveInQueue(id, "up"); break;
+    case "move-down": await moveInQueue(id, "down"); break;
+    case "pick-photo": $("photoFile").click(); break;
+    case "pick-slicer": $("slicerFile").click(); break;
+    case "fil-toggle": toggleFil(id); break;
+    case "fil-all": if (D){ D.showAll = !D.showAll; renderFilPick(); if (D.showAll){ const q = $("fil-q"); if (q) q.focus(); } } break;
+    case "fil-multi":
+      if (D){
+        D.multi = !D.multi;
+        if (!D.multi && D.uses.length > 1){ const grams = D.uses.reduce((a, u) => a + (+u.grams || 0), 0); D.uses = [{ fid:D.uses[0].fid, grams }]; const g = $("f-g"); if (g) g.value = grams ? g0(grams) : ""; }
+        renderFilPick(); recalc();
+      }
+      break;
+    case "new-spool": spoolSheet(null); break;
+    case "edit-spool": spoolSheet(fil(id)); break;
+    case "save-spool": await saveSpool(id); break;
+    case "del-spool": {
+      const f = fil(id); if (!f) return; const used = +el.dataset.used || 0;
+      confirmSheet(t("del_spool_t"), t("del_spool_p", { n:filName(f), k:used ? t("del_spool_used", { c:used }) : "" }), t("delete"), async () => {
+        S.filaments = S.filaments.filter(x => x.id !== id); render(false); await sync(() => B.delFil(id), t("t_deleted"));
+      });
+      break;
+    }
+    case "time": openTime(); break;
+    case "tp-close": closeTime(); break;
+    case "tp-mode": if (TP && TP.phase === "set"){ TP.mode = el.dataset.v; renderTime(); } break;
+    case "tp-dec": if (TP){ TP.m = clampT(TP.m - 30); updateDial(); } break;
+    case "tp-inc": if (TP){ TP.m = clampT(TP.m + 30); updateDial(); } break;
+    case "tp-chip": if (TP){ TP.m = clampT(+el.dataset.v); updateDial(); } break;
+    case "tp-show": tpShow(); break;
+    case "tp-back": if (TP){ TP.phase = "set"; renderTime(); } break;
+    case "tp-sel": if (TP){ TP.sel = +el.dataset.i || 0; const y = $("timeRoot").firstChild ? $("timeRoot").firstChild.scrollTop : 0; renderTime(); const n = $("timeRoot").firstChild; if (n) n.scrollTop = y; n && n.querySelectorAll(".rise").forEach(x => x.classList.remove("rise")); } break;
+    case "tp-print": await tpPrint(); break;
+    case "clear": ui.q = ""; ui.mat = ""; render(false); break;
+    case "copy-code": try { await navigator.clipboard.writeText(S.household.code); toast(t("t_copied")); } catch(err) { toast(S.household.code); } break;
+    case "new-code": { const c = await sync(() => B.newCode(), t("t_code_new")); if (c){ S.household.code = c; render(false); } break; }
+    case "rename": promptSheet(t("rename_t"), S.household ? S.household.name : "", async v => { S.household.name = v; render(false); await sync(() => B.rename(v), t("t_saved")); }); break;
+    case "export": exportData(); break;
+    case "import": $("importFile").click(); break;
+    case "refresh": busy(true); await reload(); busy(false); toast(t("t_updated")); break;
+    case "signout": if (window.APP_IN_ARTIFACT){ B = demoBackend(); await enter(); toast(t("demo_reset_done")); break; } await B.signOut(); location.replace(location.pathname); break;
+    case "demo-exit": if (window.APP_IN_ARTIFACT){ B = demoBackend(); await enter(); toast(t("demo_reset_done")); break; } location.replace(location.pathname); break;
+    case "wipe":
+      confirmSheet(t("wipe_t"), t("wipe_p", { w:t("wipe_word") }), t("delete"), async () => {
+        S.models = []; S.filaments = []; render(false); await sync(() => B.wipe(), t("t_deleted"));
+      }, t("wipe_word"));
+      break;
+  }
+});
+document.addEventListener("input", e => {
+  const el = e.target;
+  if (el.id === "q"){ ui.q = el.value; softRender(); }
+  else if (el.id === "f-h" || el.id === "f-m"){ digitsOnly(el, 2); recalc(); }
+  else if (el.id === "f-g"){ const v = digitsOnly(el, 5); if (D && D.uses.length === 1){ D.uses[0].grams = v; renderFilPickSoft(); } recalc(); }
+  else if (el.classList.contains("fg-in")){ const v = digitsOnly(el, 5); if (D){ const u = D.uses.find(x => x.fid === el.dataset.fid); if (u) u.grams = v; } recalc(); }
+  else if (el.id === "f-name") updateFoot();
+  else if (el.id === "fil-q"){ if (D){ D.fq = el.value; const pos = el.selectionStart; renderFilPick(); const n = $("fil-q"); if (n){ n.focus(); try { n.setSelectionRange(pos, pos); } catch(err) {} } } }
+});
+function renderFilPickSoft(){
+  // after a weight change, refresh only the "too little" marks without rebuilding the picker
+  if (!D) return;
+  document.querySelectorAll("#filpick .fdisc[data-id]").forEach(b => {
+    const f = fil(b.dataset.id); if (!f) return;
+    const short = draftNeed(f.id) > (+f.grams || 0);
+    const d = b.querySelector(".d"); if (d) d.setAttribute("style", discStyle(f.hex, short));
+    const tx = b.querySelector(".t"); if (tx){ const lo = tx.querySelector(".lo"); if (short && !lo) tx.insertAdjacentHTML("beforeend", '<span class="lo">' + esc(t("fil_low")) + '</span>'); if (!short && lo) lo.remove(); }
+  });
+}
+document.addEventListener("change", async e => {
+  const el = e.target;
+  if (el.id === "importFile" && el.files[0]){ await importData(el.files[0]); el.value = ""; }
+  else if (el.id === "photoFile" && el.files[0]){ await uploadPhoto(el.files[0]); el.value = ""; }
+  else if (el.id === "slicerFile" && el.files[0]){ await importSlicer(el.files[0]); el.value = ""; }
+  else if (el.id === "set-cur" || el.id === "set-w" || el.id === "set-k"){
+    S.settings = { currency:$("set-cur").value.trim() || "PLN", watts:Math.max(0, +$("set-w").value || 0), kwh:Math.max(0, +$("set-k").value || 0) };
+    render(false); await sync(() => B.saveSettings(S.settings), t("t_saved"));
+  }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape"){ if ($("sheetRoot").innerHTML) closeSheet(); else if (TP) closeTime(); }
+  if (e.key === "Enter" && e.target.closest && e.target.closest(".gate") && e.target.tagName === "INPUT"){
+    let n = e.target.nextElementSibling;
+    while (n && !(n.matches(".btn[data-g]"))) n = n.nextElementSibling;
+    if (n){ e.preventDefault(); n.click(); }
+  }
+});
+document.addEventListener("visibilitychange", () => { if (!document.hidden && B && S.household && !demo) remoteChanged(); });
+
+let gateState = { mode:"signin", err:"", note:"" };
+let sb = null;
+function showGate(html){
+  $("app").hidden = true; $("tabbar").hidden = true; $("boot").style.display = "none";
+  $("gate").innerHTML = '<div class="gate"><div class="gate-in">' + html +
+    '</div></div>';
+}
+function hideGate(){ $("gate").innerHTML = ""; $("boot").style.display = "none"; $("app").hidden = false; $("tabbar").hidden = false; }
+function gateRerender(){
+  const m = gateState.mode;
+  if (m === "household") householdGate(); else if (m === "db") dbGate(gateState.err); else if (m === "connect") connectGate(gateState.err);
+  else if (m === "reset") resetGate(gateState.err); else authGate(m, gateState.err, gateState.note);
+}
+const msgs = (err, note) => (err ? '<div class="msg" role="alert">' + esc(err) + '</div>' : "") + (note ? '<div class="msg ok" role="status">' + esc(note) + '</div>' : "");
+function authGate(mode, err, note){
+  gateState = { mode, err:err || "", note:note || "" };
+  const up = mode === "signup";
+  showGate(artSpool("happy") + '<h1>' + t("g_welcome") + '</h1><p class="lead">' + esc(t("appTag")) + '</p>' + msgs(err, note) +
+    '<input class="in" id="au-mail" type="email" autocomplete="username" inputmode="email" placeholder="' + esc(t("g_email")) + '" aria-label="' + esc(t("g_email")) + '">' +
+    '<input class="in" id="au-pass" type="password" autocomplete="' + (up ? "new-password" : "current-password") + '" placeholder="' + esc(t("g_pass")) + '" aria-label="' + esc(t("g_pass")) + '">' +
+    '<button class="btn wide" style="margin-top:6px" data-g="' + (up ? "signup" : "signin") + '">' + esc(t(up ? "g_signup" : "g_signin")) + '</button>' +
+    '<div class="alt">' + esc(t(up ? "g_has_acc" : "g_no_acc")) + ' <button data-g="' + (up ? "to-signin" : "to-signup") + '">' + esc(t(up ? "g_login" : "g_create")) + '</button></div>' +
+    (up ? "" : '<div class="alt" style="margin-top:8px"><button data-g="forgot" style="font-weight:500">' + esc(t("g_forgot")) + '</button></div>') +
+    '<div class="or">·</div><button class="btn sec wide" data-g="demo">' + esc(t("g_demo")) + '</button>' +
+    '<div class="alt"><button data-g="to-connect" style="font-weight:500;color:var(--sub)">' + esc(t("g_other_db")) + '</button></div>');
+}
+function resetGate(err){
+  gateState = { mode:"reset", err:err || "" };
+  showGate(artSpool("happy") + '<h1>' + t("g_reset_t") + '</h1><p class="lead"></p>' + msgs(err) +
+    '<input class="in" id="np-pass" type="password" autocomplete="new-password" placeholder="' + esc(t("g_pass")) + '">' +
+    '<button class="btn wide" style="margin-top:6px" data-g="set-pass">' + esc(t("g_reset_save")) + '</button>');
+}
+function householdGate(err){
+  gateState = { mode:"household", err:err || "" };
+  showGate(artSpool("happy") + '<h1>' + t("g_hh_t") + '</h1><p class="lead">' + esc(t("g_hh_p")) + '</p>' + msgs(err) +
+    '<button class="btn wide" data-g="hh-new">' + esc(t("g_hh_new")) + '</button><div class="or">·</div>' +
+    '<input class="in code" id="hh-code" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" placeholder="' + esc(t("g_hh_code")) + '" style="text-align:center;font-size:18px">' +
+    '<button class="btn sec wide" data-g="hh-join">' + esc(t("g_hh_join")) + '</button>' +
+    '<div class="alt"><button data-g="signout-gate" style="font-weight:500;color:var(--sub)">' + esc(t("signout")) + '</button></div>');
+}
+function dbGate(err, lead){
+  gateState = { mode:"db", err:err || "" };
+  showGate(artSpool("sleep") + '<h1>' + t("g_db_t") + '</h1><p class="lead">' + esc(lead || t("g_db_p")) + '</p>' + msgs(err) +
+    '<button class="btn wide" data-g="retry">' + esc(t("g_retry")) + '</button>' +
+    '<div class="alt"><button data-g="signout-gate" style="font-weight:500;color:var(--sub)">' + esc(t("signout")) + '</button></div>');
+}
+function connectGate(err){
+  gateState = { mode:"connect", err:err || "" };
+  const c = getCfg() || {};
+  showGate(artSpool("sleep") + '<h1>' + t("g_conn_t") + '</h1><p class="lead">' + esc(t("g_conn_p")) + '</p>' + msgs(err) +
+    '<input class="in" id="cf-url" type="url" value="' + esc(c.url || "") + '" placeholder="' + esc(t("g_url")) + '" autocomplete="off" spellcheck="false">' +
+    '<input class="in" id="cf-key" value="' + esc(c.key || "") + '" placeholder="' + esc(t("g_key")) + '" autocomplete="off" spellcheck="false">' +
+    '<button class="btn wide" style="margin-top:6px" data-g="connect">' + esc(t("g_connect")) + '</button>' +
+    '<div class="alt"><button data-g="demo" style="font-weight:500">' + esc(t("g_demo")) + '</button></div>');
+}
+function getCfg(){
+  try { const own = JSON.parse(lsGet(LS.cfg) || "null"); if (own && own.url && own.key) return own; } catch(e) {}
+  const c = window.APP_CONFIG; return c && c.url && c.key ? { url:c.url, key:c.key } : null;
+}
+
+async function gateAction(what, btn){
+  const workBtn = () => { if (btn && btn.classList.contains("btn")){ btn.disabled = true; btn.textContent = t("g_working"); } };
+  if (what === "demo"){ location.search = "?demo"; return; }
+  if (what === "to-signup"){ authGate("signup"); return; }
+  if (what === "to-signin"){ authGate("signin"); return; }
+  if (what === "to-connect"){ connectGate(); return; }
+  if (what === "retry"){ workBtn(); if (!B){ location.reload(); return; } await enter(); return; }
+  if (what === "signout-gate"){ if (B) await B.signOut(); location.replace(location.pathname); return; }
+  if (what === "connect"){
+    const url = $("cf-url").value.trim().replace(/\/+$/, ""), key = $("cf-key").value.trim();
+    if (!/^https:\/\/.+/.test(url) || key.length < 20){ connectGate(t("g_bad_cfg")); return; }
+    lsSet(LS.cfg, JSON.stringify({ url, key })); location.replace(location.pathname); return;
+  }
+  if (what === "hh-new"){
+    workBtn();
+    try { await B.createHousehold("Workshop"); await enter(); } catch(e){ householdGate(e.message); }
+    return;
+  }
+  if (what === "hh-join"){
+    const code = $("hh-code").value.trim(); if (!code){ $("hh-code").focus(); return; }
+    workBtn();
+    try { await B.joinHousehold(code); await enter(); } catch(e){ householdGate(/BAD_CODE/.test(e.message || "") ? t("g_bad_code") : e.message); }
+    return;
+  }
+  if (what === "set-pass"){
+    const p = $("np-pass").value; if (p.length < 6){ resetGate(t("g_pass_short")); return; }
+    workBtn();
+    const { error } = await sb.auth.updateUser({ password:p });
+    if (error){ resetGate(error.message); return; }
+    history.replaceState(null, "", location.pathname); await enter(); return;
+  }
+  const email = ($("au-mail") || {}).value ? $("au-mail").value.trim() : "";
+  if (what === "forgot"){
+    if (!email){ authGate("signin", t("g_fill")); return; }
+    await sb.auth.resetPasswordForEmail(email, { redirectTo:location.origin + location.pathname });
+    authGate("signin", "", t("g_reset_sent")); return;
+  }
+  const pass = $("au-pass").value;
+  const mode = what === "signup" ? "signup" : "signin";
+  if (!email || !pass){ authGate(mode, t("g_fill")); return; }
+  if (mode === "signup" && pass.length < 6){ authGate(mode, t("g_pass_short")); return; }
+  workBtn();
+  try {
+    const res = mode === "signup"
+      ? await sb.auth.signUp({ email, password:pass, options:{ emailRedirectTo:location.origin + location.pathname } })
+      : await sb.auth.signInWithPassword({ email, password:pass });
+    if (res.error) throw res.error;
+    if (!res.data.session){ authGate("signin", "", t("g_confirm")); return; }
+    user = res.data.session.user; await enter();
+  } catch(e){ authGate(mode, e.message || String(e)); }
+}
+
+async function enter(){
+  try {
+    const d = await B.load();
+    if (d.noHousehold){ householdGate(); return; }
+    Object.assign(S, d);
+  } catch(e){ console.warn(e); dbGate(e.message || String(e)); return; }
+  hideGate(); render();
+  B.subscribe(remoteChanged);
+}
+
+async function start(){
+  if (window.APP_IN_ARTIFACT || new URLSearchParams(location.search).has("demo")){
+    demo = true; user = { id:"demo", email:"you@example.com" }; B = demoBackend(); await enter(); return;
+  }
+  const cfg = getCfg();
+  if (!cfg){ connectGate(); return; }
+  let createClient;
+  try { ({ createClient } = await import(SUPABASE_JS)); }
+  catch(e){ dbGate(t("t_offline"), t("g_cdn_p")); return; }
+  try { sb = createClient(cfg.url, cfg.key, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:"3dprints.auth" } }); }
+  catch(e){ connectGate(e.message); return; }
+  B = sbBackend(sb);
+  let recovering = /type=recovery/.test(location.hash);
+  sb.auth.onAuthStateChange((ev, session) => {
+    if (ev === "PASSWORD_RECOVERY"){ recovering = true; user = session && session.user; resetGate(); }
+  });
+  const { data, error } = await sb.auth.getSession();
+  if (error){ authGate("signin", error.message); return; }
+  if (recovering && data.session){ user = data.session.user; resetGate(); return; }
+  if (data.session && data.session.user){ user = data.session.user; if (location.hash.includes("access_token")) history.replaceState(null, "", location.pathname); await enter(); }
+  else authGate("signin");
+}
+
+if (!window.APP_IN_ARTIFACT && "serviceWorker" in navigator && location.protocol === "https:"){
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
+start();
+</script>
+</body>
+</html>
