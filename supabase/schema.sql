@@ -91,6 +91,11 @@ drop policy if exists "own models" on public.models;
 create policy "own models" on public.models
   for all to authenticated using (household_id = public.current_household()) with check (household_id = public.current_household());
 
+-- ---------- table access for signed-in users (row level security above still applies) ----------
+grant usage on schema public to authenticated;
+grant select on public.households, public.household_members to authenticated;
+grant select, insert, update, delete on public.household_settings, public.filaments, public.models to authenticated;
+
 -- ---------- functions called by the app ----------
 create or replace function public.new_code()
 returns text language sql volatile as $$
