@@ -369,7 +369,7 @@ select.in{appearance:none;-webkit-appearance:none;background-image:url("data:ima
 <script type="module">
 const APP_VERSION = "3.0.0";
 const SUPABASE_JS = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/+esm";
-const LS = { theme:"3dprints.theme", cfg:"3dprints.supabase", ui:"3dprints.ui" };
+const LS = { theme:"3dprints.theme", ui:"3dprints.ui" };
 const MATERIALS = ["PLA","Pure PLA","PLA+","PETG","ABS","ASA","TPU","PA-CF","PC","Resin","Other"];
 
 const $ = id => document.getElementById(id);
@@ -466,9 +466,11 @@ en:{
   g_hh_t:"One <em>workshop</em>, two people", g_hh_p:"A workshop is a shared list of spools and prints. Start a new one or join with your partner's code.",
   g_hh_new:"Start a workshop", g_hh_code:"Invite code", g_hh_join:"Join", g_bad_code:"No workshop has that code.",
   g_db_t:"Database <em>isn't answering</em>", g_db_p:"You're signed in, but the database refused. Usually the Supabase project is paused or the SQL script hasn't been run.",
-  g_retry:"Try again", g_conn_t:"Connect a <em>database</em>", g_conn_p:"Paste the project URL and public key from Supabase → Project Settings → API.",
-  g_url:"Project URL", g_key:"Public key (publishable / anon)", g_connect:"Connect", g_bad_cfg:"The URL starts with https:// and the key is a long string.",
-  g_other_db:"Different database",
+  g_retry:"Try again",
+  g_setup_t:"Almost ready", g_setup_p:"Add your Supabase project URL and publishable key to config.js, then reload this page.",
+  g_e_rate:"Too many attempts. Wait a moment and try again.", g_e_login:"Wrong email or password.",
+  g_e_exists:"This account already exists. Sign in instead.", g_e_confirm:"Confirm your email address first, then sign in.",
+  g_e_closed:"New accounts are turned off for this app.",
   demo_on:"Example data — nothing is saved", demo_exit:"Leave", demo_reset:"Start over", demo_reset_done:"Example reset",
   join_warn:"You'll move to another workshop. Spools in the current one stay where they are.",
   g_cdn_p:"Couldn't load the sign-in library. Check your internet and try again.",
@@ -484,7 +486,7 @@ Object.assign(STR.en, {
   e_spools_t:"No spools", e_spools_p:"Tap + to add a spool. Models take their colours and cost from it.",
   e_done_t:"Nothing yet", e_done_p:"Printed models land here, and their grams come off the spools.",
   wipe_t:"Delete everything?", del_model_t:"Delete model?", del_spool_t:"Delete spool?", rename_t:"Workshop name",
-  g_welcome:"Your workshop", g_reset_t:"New password", g_hh_t:"One workshop, two people", g_db_t:"Database isn't answering", g_conn_t:"Connect a database",
+  g_welcome:"Your workshop", g_reset_t:"New password", g_hh_t:"One workshop, two people", g_db_t:"Database isn't answering",
   offline:"No connection to the database. Changes may not be saved.",
   missing_spool:"That spool was removed. Pick another.", short_of:"{g} g short: {c}",
   miss_tw:"Time and weight missing", miss_t:"Time missing", miss_w:"Weight missing", fill_in:"Fill in",
@@ -1615,7 +1617,7 @@ function showGate(html){
 function hideGate(){ $("gate").innerHTML = ""; $("boot").style.display = "none"; $("app").hidden = false; $("tabbar").hidden = false; }
 function gateRerender(){
   const m = gateState.mode;
-  if (m === "household") householdGate(); else if (m === "db") dbGate(gateState.err); else if (m === "connect") connectGate(gateState.err);
+  if (m === "household") householdGate(); else if (m === "db") dbGate(gateState.err); else if (m === "setup") setupGate();
   else if (m === "reset") resetGate(gateState.err); else authGate(m, gateState.err, gateState.note);
 }
 const msgs = (err, note) => (err ? '<div class="msg" role="alert">' + esc(err) + '</div>' : "") + (note ? '<div class="msg ok" role="status">' + esc(note) + '</div>' : "");
@@ -1628,8 +1630,7 @@ function authGate(mode, err, note){
     '<button class="btn wide" style="margin-top:6px" data-g="' + (up ? "signup" : "signin") + '">' + esc(t(up ? "g_signup" : "g_signin")) + '</button>' +
     '<div class="alt">' + esc(t(up ? "g_has_acc" : "g_no_acc")) + ' <button data-g="' + (up ? "to-signin" : "to-signup") + '">' + esc(t(up ? "g_login" : "g_create")) + '</button></div>' +
     (up ? "" : '<div class="alt" style="margin-top:8px"><button data-g="forgot" style="font-weight:500">' + esc(t("g_forgot")) + '</button></div>') +
-    '<div class="or">·</div><button class="btn sec wide" data-g="demo">' + esc(t("g_demo")) + '</button>' +
-    '<div class="alt"><button data-g="to-connect" style="font-weight:500;color:var(--sub)">' + esc(t("g_other_db")) + '</button></div>');
+    '<div class="or">·</div><button class="btn sec wide" data-g="demo">' + esc(t("g_demo")) + '</button>');
 }
 function resetGate(err){
   gateState = { mode:"reset", err:err || "" };
@@ -1651,18 +1652,14 @@ function dbGate(err, lead){
     '<button class="btn wide" data-g="retry">' + esc(t("g_retry")) + '</button>' +
     '<div class="alt"><button data-g="signout-gate" style="font-weight:500;color:var(--sub)">' + esc(t("signout")) + '</button></div>');
 }
-function connectGate(err){
-  gateState = { mode:"connect", err:err || "" };
-  const c = getCfg() || {};
-  showGate(artSpool("sleep") + '<h1>' + t("g_conn_t") + '</h1><p class="lead">' + esc(t("g_conn_p")) + '</p>' + msgs(err) +
-    '<input class="in" id="cf-url" type="url" value="' + esc(c.url || "") + '" placeholder="' + esc(t("g_url")) + '" autocomplete="off" spellcheck="false">' +
-    '<input class="in" id="cf-key" value="' + esc(c.key || "") + '" placeholder="' + esc(t("g_key")) + '" autocomplete="off" spellcheck="false">' +
-    '<button class="btn wide" style="margin-top:6px" data-g="connect">' + esc(t("g_connect")) + '</button>' +
+function setupGate(detail){
+  gateState = { mode:"setup", err:"" };
+  showGate(artSpool() + '<h1>' + t("g_setup_t") + '</h1><p class="lead">' + esc(t("g_setup_p")) + '</p>' + msgs(detail) +
     '<div class="alt"><button data-g="demo" style="font-weight:500">' + esc(t("g_demo")) + '</button></div>');
 }
 function getCfg(){
-  try { const own = JSON.parse(lsGet(LS.cfg) || "null"); if (own && own.url && own.key) return own; } catch(e) {}
-  const c = window.APP_CONFIG; return c && c.url && c.key ? { url:c.url, key:c.key } : null;
+  const c = window.APP_CONFIG;
+  return c && c.url && c.key && !/your-project|your-publishable/i.test(c.url + c.key) ? { url:c.url, key:c.key } : null;
 }
 
 async function gateAction(what, btn){
@@ -1670,14 +1667,8 @@ async function gateAction(what, btn){
   if (what === "demo"){ location.search = "?demo"; return; }
   if (what === "to-signup"){ authGate("signup"); return; }
   if (what === "to-signin"){ authGate("signin"); return; }
-  if (what === "to-connect"){ connectGate(); return; }
   if (what === "retry"){ workBtn(); if (!B){ location.reload(); return; } await enter(); return; }
   if (what === "signout-gate"){ if (B) await B.signOut(); location.replace(location.pathname); return; }
-  if (what === "connect"){
-    const url = $("cf-url").value.trim().replace(/\/+$/, ""), key = $("cf-key").value.trim();
-    if (!/^https:\/\/.+/.test(url) || key.length < 20){ connectGate(t("g_bad_cfg")); return; }
-    lsSet(LS.cfg, JSON.stringify({ url, key })); location.replace(location.pathname); return;
-  }
   if (what === "hh-new"){
     workBtn();
     try { await B.createHousehold("Workshop"); await enter(); } catch(e){ householdGate(e.message); }
@@ -1714,9 +1705,18 @@ async function gateAction(what, btn){
     if (res.error) throw res.error;
     if (!res.data.session){ authGate("signin", "", t("g_confirm")); return; }
     user = res.data.session.user; await enter();
-  } catch(e){ authGate(mode, e.message || String(e)); }
+  } catch(e){ authGate(mode, authError(e)); }
 }
 
+function authError(e){
+  const m = String((e && e.message) || e || "").toLowerCase();
+  if (e && e.status === 429) return t("g_e_rate");
+  if (m.includes("invalid login")) return t("g_e_login");
+  if (m.includes("already registered")) return t("g_e_exists");
+  if (m.includes("not confirmed")) return t("g_e_confirm");
+  if (m.includes("signups not allowed")) return t("g_e_closed");
+  return (e && e.message) || String(e);
+}
 async function enter(){
   try {
     const d = await B.load();
@@ -1732,12 +1732,12 @@ async function start(){
     demo = true; user = { id:"demo", email:"you@example.com" }; B = demoBackend(); await enter(); return;
   }
   const cfg = getCfg();
-  if (!cfg){ connectGate(); return; }
+  if (!cfg){ setupGate(); return; }
   let createClient;
   try { ({ createClient } = await import(SUPABASE_JS)); }
   catch(e){ dbGate(t("t_offline"), t("g_cdn_p")); return; }
   try { sb = createClient(cfg.url, cfg.key, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:"3dprints.auth" } }); }
-  catch(e){ connectGate(e.message); return; }
+  catch(e){ setupGate(e.message); return; }
   B = sbBackend(sb);
   let recovering = /type=recovery/.test(location.hash);
   sb.auth.onAuthStateChange((ev, session) => {

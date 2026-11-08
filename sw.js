@@ -1,6 +1,6 @@
 // 3D Prints service worker: network first for the app shell, cache as an offline fallback.
 // Requests to Supabase and other origins are never cached.
-const CACHE = "3dprints-v1";
+const CACHE = "3dprints-v3";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
